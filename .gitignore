@@ -9,3 +9,5 @@ application.properties
 connect_device_package/
 요구사항 분석/
 도커Test/
+
+Home_garden_Server/src/test/resources/application.yml
