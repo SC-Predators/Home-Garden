@@ -11,3 +11,7 @@ connect_device_package/
 도커Test/
 
 Home_garden_Server/src/test/resources/application.yml
+
+HomeGardenServer/src/main/java/com/drimaes/homegardenserver/config/secret/Secret.java
+
+HomeGardenServer/src/main/java/com/drimaes/homegardenserver/utils/AES128.java
