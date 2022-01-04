@@ -54,9 +54,8 @@ public class userProvider {
             throw new BaseException(PASSWORD_DECRYPTION_ERROR);
         }
 
-        if (postLoginReq.getPassword().equals(password)) { //비말번호가 일치한다면 userIdx를 가져온다.
-            int userIdx = userDao.getPwd(postLoginReq).getUserIdx();
-            return new PostLoginRes(userIdx);
+        if (postLoginReq.getClientPW().equals(password)) { //비말번호가 일치한다면 userIdx를 가져온다.
+            return new PostLoginRes(userDao.getPwd(postLoginReq).getHomeGarden_barcode(), userDao.getPwd(postLoginReq).getStatus());
 
         } else { // 비밀번호가 다르다면 에러메세지를 출력한다.
             throw new BaseException(FAILED_TO_LOGIN);

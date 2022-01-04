@@ -74,19 +74,17 @@ public class userController {
      * **/
     @ResponseBody
     @GetMapping("/sign-up")
-    public BaseResponse<String> isDuplicatedUser(@RequestBody GetIsDuplicatedUserReq getIsDuplicatedUserReq){
-        if(getIsDuplicatedUserReq.getClientID()==null){
+    public BaseResponse<String> isDuplicatedUser(@RequestBody GetIsDuplicatedUserReq getIsDuplicatedUserReq) {
+        if (getIsDuplicatedUserReq.getClientID() == null) {
             return new BaseResponse<>(POST_USERS_EMPTY_CLIENTID);
         }
-        try{
+        try {
             String isDuplicatedResult = userProvider.isDuplicatedUser(getIsDuplicatedUserReq);
             return new BaseResponse<>(isDuplicatedResult);
-        }catch (BaseException exception){
+        } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
         }
     }
-
-
     /**
      * 식물 닉네임 받아오기.
      * [get] app/users/plant/nickname
@@ -102,6 +100,21 @@ public class userController {
             return new BaseResponse<>(getUserPlantNickNameRes);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+    @ResponseBody
+    @PostMapping("/log-in")
+    public BaseResponse<PostLoginRes> logIn(@RequestBody PostLoginReq postLoginReq) {
+        try {
+            if (postLoginReq.getClientID() == null) {// 이메일이 NULL값인지 확인
+                return new BaseResponse<>(FAILED_TO_LOGIN_CAUSED_BY_EMAIL);
+            }
+            PostLoginRes postLoginRes = userProvider.logIn(postLoginReq);
+            if(postLoginRes.getUserStatus().equals("A"))return new BaseResponse<>(postLoginRes);
+            else  return new BaseResponse<>(USERS_SATUS_NOT_ACTIVATED);
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
         }
     }
 
