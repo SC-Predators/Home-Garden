@@ -169,10 +169,21 @@ public class userDAO {
         return this.jdbcTemplate.update(deleteUserQueryByEamil, getUserByEmail);
     }
 
-    public int reportUserCnt(PatchUserReq patchUserReq){
-        String reportUserCntQuery = "update User set reportedCnt = ? where userIdx = ? ";
-        Object[] reportUserCntParams = new Object[]{"reportCnt+1", patchUserReq.getUserIdx()}; // 주입될 값들(nickname, userIdx) 순
+    //가장 최근의 식물 정보 반환
+    public GetPlantStatusRes getPresentPlantStatus(GetPresentPlantStatusReq getPresentPlantStatusReq){
+        String getPresentStateQuery = "SELECT  humidity, light, water_level, phStatus FROM Present_state PS, Homegarden_Client HC WHERE PS.homegardenID = HC.homegardenID AND HC.clientID= ? ORDER BY writeTime DESC LIMIT 1;";
+        String getPresentImgQuery = "SELECT img FROM Present_state PS, Homegarden_Client HC WHERE img IS NOT NULL AND  PS.homegardenID = HC.homegardenID AND HC.clientID= ? ORDER BY  writeTime DESC LIMIT 1;";
+        String clientID = getPresentPlantStatusReq.getClientID();
+        String mostPresentImgURL = this.jdbcTemplate.queryForObject(getPresentImgQuery, String.class, clientID);
 
-        return this.jdbcTemplate.update(reportUserCntQuery, reportUserCntParams);
+        return this.jdbcTemplate.queryForObject(getPresentStateQuery,
+                (rs, rowNum) -> new GetPlantStatusRes(
+                        mostPresentImgURL,
+                        rs.getInt("humidity"),
+                        rs.getInt("light"),
+                        rs.getInt("water_level"),
+                        rs.getInt("phStatus")),
+                clientID); // 한 개의 회원정보를 얻기 위한 jdbcTemplate 함수(Query, 객체 매핑 정보, Params)의 결과 반환
     }
+
 }

@@ -105,6 +105,24 @@ public class userController {
         }
     }
 
+    /**
+     * 식물 현재 상태 받아오기.
+     * [get] http://localhost:23628/app/users/plant/present
+     */
+    @ResponseBody
+    @GetMapping("plant/present")
+    public BaseResponse<GetPlantStatusRes> getPresentPlantStatus(@RequestBody GetPresentPlantStatusReq getPresentPlantStatusReq){
+        if(getPresentPlantStatusReq.getClientID() == null){
+            return new BaseResponse<>(USERS_EMPTY_USER_ID);
+        }
+        try{
+            GetPlantStatusRes getPlantStatusRes = userProvider.getPresentPlantStatus(getPresentPlantStatusReq);
+            return new BaseResponse<>(getPlantStatusRes);
+        } catch (BaseException exception){
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
 
 
 
