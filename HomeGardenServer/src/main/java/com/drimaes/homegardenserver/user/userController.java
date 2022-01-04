@@ -42,12 +42,6 @@ public class userController {
         this.userService = userService;
     }
 
-    /*public userController(userProvider userProvider, userService userService, JwtService jwtService) {
-        this.userProvider = userProvider;
-        this.userService = userService;
-        this.jwtService = jwtService;
-    }*/
-
     // ******************************************************************************
 
     /**

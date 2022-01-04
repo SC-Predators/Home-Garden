@@ -55,8 +55,8 @@ public class userDAO {
 
     // 회원가입
     public int createUser(PostUserReq postUserReq) {
-        String createUserQuery = "insert into Homegarden_Client (clientID, clientPW, plantNickName) VALUES (?,?,?)"; // 실행될 동적 쿼리문
-        Object[] createUserParams = new Object[]{postUserReq.getClientID(), postUserReq.getPassword(), postUserReq.getPlantNickName()}; // 동적 쿼리의 ?부분에 주입될 값
+        String createUserQuery = "insert into Homegarden_Client (homegardenID,clientID, clientPW, plantNickName) VALUES (?,?,?,?)"; // 실행될 동적 쿼리문
+        Object[] createUserParams = new Object[]{postUserReq.getHomegarden_barcode(),postUserReq.getClientID(), postUserReq.getPassword(), postUserReq.getPlantNickName()}; // 동적 쿼리의 ?부분에 주입될 값
         this.jdbcTemplate.update(createUserQuery, createUserParams);
         // email -> postUserReq.getEmail(), password -> postUserReq.getPassword(), nickname -> postUserReq.getNickname() 로 매핑(대응)시킨다음 쿼리문을 실행한다.
         // 즉 DB의 User Table에 (email, password, nickname)값을 가지는 유저 데이터를 삽입(생성)한다.
