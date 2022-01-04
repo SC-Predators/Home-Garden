@@ -113,4 +113,16 @@ public class userProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+    //사용자 ID중복 확인 메서드
+    public String isDuplicatedUser(GetIsDuplicatedUserReq getIsDuplicatedUserReq) throws BaseException{
+        try{
+            int result = userDao.getIsDuplicatedUser(getIsDuplicatedUserReq);
+            if(result == 0 ) return "true";
+            else return "false";
+
+        } catch(Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 }

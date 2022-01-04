@@ -77,6 +77,16 @@ public class userDAO {
                 getClientID
         );
     }
+    //아이디 중복 확인
+    public int getIsDuplicatedUser(GetIsDuplicatedUserReq getIsDuplicatedUserReq){
+        String getUserQuery = "SELECT COUNT(ClientID) FROM Homegarden_Client WHERE clientID= ?";
+        String getClientID = getIsDuplicatedUserReq.getClientID();
+
+        int result = this.jdbcTemplate.queryForObject(getUserQuery, int.class, getClientID);
+        System.out.println(result);
+
+        return result;
+    }
 
     // 이메일 확인
     public int checkEmail(String email) {

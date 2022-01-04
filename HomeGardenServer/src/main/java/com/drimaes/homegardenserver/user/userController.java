@@ -75,6 +75,25 @@ public class userController {
         }
     }
     /**
+     * 가입자의 중복 ID입력 확인!
+     * [get] app/users/sign-up
+     * **/
+    @ResponseBody
+    @GetMapping("/sign-up")
+    public BaseResponse<String> isDuplicatedUser(@RequestBody GetIsDuplicatedUserReq getIsDuplicatedUserReq){
+        if(getIsDuplicatedUserReq.getClientID()==null){
+            return new BaseResponse<>(POST_USERS_EMPTY_CLIENTID);
+        }
+        try{
+            String isDuplicatedResult = userProvider.isDuplicatedUser(getIsDuplicatedUserReq);
+            return new BaseResponse<>(isDuplicatedResult);
+        }catch (BaseException exception){
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+
+    /**
      * 식물 닉네임 받아오기.
      * [get] app/users/plant/nickname
      */
@@ -84,7 +103,6 @@ public class userController {
         if(getUserPlantNickNameReq.getClientID() == null){
             return new BaseResponse<>(USERS_EMPTY_USER_ID);
         }
-        System.out.println(getUserPlantNickNameReq.getClientID());
         try{
             GetUserPlantNickNameRes getUserPlantNickNameRes = userProvider.getUserPlantNickName(getUserPlantNickNameReq);
             return new BaseResponse<>(getUserPlantNickNameRes);
@@ -92,6 +110,8 @@ public class userController {
             return new BaseResponse<>((exception.getStatus()));
         }
     }
+
+
 
 
 }
