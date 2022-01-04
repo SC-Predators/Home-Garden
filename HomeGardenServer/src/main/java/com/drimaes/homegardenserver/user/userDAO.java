@@ -65,6 +65,19 @@ public class userDAO {
         return this.jdbcTemplate.queryForObject(lastInserIdQuery, int.class); // 해당 쿼리문의 결과 마지막으로 삽인된 유저의 userIdx번호를 반환한다.
     }
 
+    //식물 닉네임 확인
+    public GetUserPlantNickNameRes getClienPlantNickName(GetUserPlantNickNameReq getUserPlantNickNameReq){
+        String getUserQuery = "SELECT plantNickName FROM Homegarden_Client WHERE clientID = ?";
+        String getClientID = getUserPlantNickNameReq.getClientID();
+
+        return this.jdbcTemplate.queryForObject(getUserQuery,
+                (rs, rowNum) -> new GetUserPlantNickNameRes(
+                        rs.getString("plantNickName")
+                ), // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
+                getClientID
+        );
+    }
+
     // 이메일 확인
     public int checkEmail(String email) {
         String checkEmailQuery = "select exists(select email from User where email = ?)"; // User Table에 해당 email 값을 갖는 유저 정보가 존재하는가?

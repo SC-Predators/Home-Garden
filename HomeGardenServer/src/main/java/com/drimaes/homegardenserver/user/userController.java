@@ -63,7 +63,6 @@ public class userController {
         if (postUserReq.getClientID() == null) {
             return new BaseResponse<>(POST_USERS_EMPTY_CLIENTID);
         }
-        System.out.println(postUserReq.getPassword());
         if (postUserReq.getPassword() == null) {
             return new BaseResponse<>(POST_USERS_EMPTY_PASSWORD);
         }
@@ -75,6 +74,24 @@ public class userController {
             return new BaseResponse<>((exception.getStatus()));
         }
     }
-    
+    /**
+     * 식물 닉네임 받아오기.
+     * [get] app/users/plant/nickname
+     */
+    @ResponseBody
+    @GetMapping("/plant/nickname")
+    public BaseResponse<GetUserPlantNickNameRes> getUserPlantNickNameWithCLIENTID(@RequestBody GetUserPlantNickNameReq getUserPlantNickNameReq){
+        if(getUserPlantNickNameReq.getClientID() == null){
+            return new BaseResponse<>(USERS_EMPTY_USER_ID);
+        }
+        System.out.println(getUserPlantNickNameReq.getClientID());
+        try{
+            GetUserPlantNickNameRes getUserPlantNickNameRes = userProvider.getUserPlantNickName(getUserPlantNickNameReq);
+            return new BaseResponse<>(getUserPlantNickNameRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
 
 }

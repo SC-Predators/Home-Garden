@@ -7,7 +7,6 @@ import com.drimaes.homegardenserver.config.secret.Secret;
 import com.drimaes.homegardenserver.utils.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import static com.drimaes.homegardenserver.config.BaseResponseStatus.*;
