@@ -134,4 +134,14 @@ public class userProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+    //과거 식물 상태 반환
+    public List<GetPlantStatusRes> getHistoryPlantStatus(GetHistoryPlantStatusReq getHistoryPlantStatusReq) throws BaseException{
+        try{
+            List<GetPlantStatusRes> getPlantStatusRes= userDao.getHistoryPlantStatus(getHistoryPlantStatusReq);
+            return getPlantStatusRes;
+        } catch (Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 }

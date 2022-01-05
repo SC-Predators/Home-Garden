@@ -3,10 +3,15 @@ package com.drimaes.homegardenserver.user;
 import com.drimaes.homegardenserver.user.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
+import java.util.Locale;
 
 @Repository //  [Persistence Layer에서 DAO를 명시하기 위해 사용]
 
@@ -180,6 +185,40 @@ public class userDAO {
                         rs.getInt("water_level"),
                         rs.getInt("phStatus")),
                 clientID); // 한 개의 회원정보를 얻기 위한 jdbcTemplate 함수(Query, 객체 매핑 정보, Params)의 결과 반환
+    }
+
+
+    //시간이 주어졌을 때 식물 정보 반환
+    public List<GetPlantStatusRes> getHistoryPlantStatus(GetHistoryPlantStatusReq getHistoryPlantStatusReq){
+        List<GetPlantStatusRes> resultList;
+        //historyTime 에시: '2022-01-04 05:30:03';
+        String historyTime = "2022-" + getHistoryPlantStatusReq.getMonth() + "-" + getHistoryPlantStatusReq.getDate() +" "+getHistoryPlantStatusReq.getHour()+":"+getHistoryPlantStatusReq.getMinute()+":00";
+        String clientID = getHistoryPlantStatusReq.getClientID();
+        String makeHistoryView = String.format("CREATE VIEW HistoryVIEW AS " +
+                                               "SELECT writeTime, temperature, humidity, light, water_level, phStatus, img " +
+                                               "FROM Present_state PS, Homegarden_Client HC " +
+                                               "WHERE PS.homegardenID = HC.homegardenID AND HC.clientID= \"%s\" AND writeTime < \'%s\'", clientID, historyTime);
+
+        String getStateQuery = "SELECT  temperature, humidity, light, water_level, phStatus FROM HistoryVIEW ORDER BY writeTime DESC LIMIT 1;";
+        String getImgQuery = "SELECT img FROM HOMEGARDEN.HistoryVIEW WHERE img IS NOT NULL ORDER BY  writeTime DESC LIMIT 1;";
+        String dropViewQuery = "DROP VIEW HistoryVIEW;";
+
+        this.jdbcTemplate.execute(makeHistoryView);
+
+        String mostPresentImgURL = this.jdbcTemplate.queryForObject(getImgQuery, String.class);
+        System.out.println(mostPresentImgURL);
+
+        resultList =  this.jdbcTemplate.query(getStateQuery,
+                (rs, rowNum) -> new GetPlantStatusRes(
+                        mostPresentImgURL,
+                        rs.getInt("humidity"),
+                        rs.getInt("light"),
+                        rs.getInt("water_level"),
+                        rs.getInt("phStatus"))
+                );
+
+        this.jdbcTemplate.execute(dropViewQuery);
+        return resultList;
     }
 
 }

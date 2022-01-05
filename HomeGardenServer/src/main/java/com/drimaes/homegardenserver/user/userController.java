@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.util.List;
+
 import static com.drimaes.homegardenserver.config.BaseResponseStatus.*;
 
 @RestController // Rest API 또는 WebAPI를 개발하기 위한 어노테이션. @Controller + @ResponseBody 를 합친것.
@@ -136,6 +138,23 @@ public class userController {
         }
     }
 
+    /**
+     * 식물 과거 상태 받아오기.
+     * [get] http://localhost:23628/app/users/plant/history
+     */
+    @ResponseBody
+    @GetMapping("plant/history")
+    public BaseResponse<List<GetPlantStatusRes>> getHistoryPlantStatus(@RequestBody GetHistoryPlantStatusReq getHistoryPlantStatusReq){
+        if(getHistoryPlantStatusReq.getClientID()==null){
+            return new BaseResponse<>(USERS_EMPTY_USER_ID);
+        }
+        try{
+            List<GetPlantStatusRes> getPlantStatusRes = userProvider.getHistoryPlantStatus(getHistoryPlantStatusReq);
+            return new BaseResponse<>(getPlantStatusRes);
+        }catch (BaseException exception){
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
 
 
 
