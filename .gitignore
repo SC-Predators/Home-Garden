@@ -9,6 +9,7 @@ application.properties
 connect_device_package/
 요구사항 분석/
 도커Test/
+Homegarden1/
 
 Home_garden_Server/src/test/resources/application.yml
 
@@ -17,3 +18,7 @@ HomeGardenServer/src/main/java/com/drimaes/homegardenserver/config/secret/Secret
 HomeGardenServer/src/main/java/com/drimaes/homegardenserver/utils/AES128.java
 
 sampleImgs/
+
+new_user_credentials.csv
+
+HomeGardenRASPB/configKey.py

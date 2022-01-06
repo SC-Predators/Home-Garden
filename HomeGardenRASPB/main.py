@@ -1,12 +1,15 @@
 homegarden_barcode = "homegarden1"
 
+import boto3
+from botocore.client import Config
+import configKey as ck
 import cv2
 import datetime as dt
 import os
 
+# pip install boto3
 # Module not found err: pip install opencv-python
-# print(cv.__version__)
-# 홈가든 장치 바코드를 갖는 폴더 생성
+
 def createFolder(directory):
     try:
         if not os.path.exists(directory):
@@ -14,6 +17,19 @@ def createFolder(directory):
     except OSError:
         print('Error: Creating directory. ' + directory)
 
+def upload_img_to_s3(file_name): # f = 파일명
+    #data = open('plist/static/plist/img/artist/'+f+'.jpg', 'rb')
+    # '로컬의 해당파일경로'+ 파일명 + 확장자
+
+    data = open(file_name, 'rb')
+    s3 = boto3.resource(
+        's3',
+        aws_access_key_id=ck.ACCESS_KEY_ID,
+        aws_secret_access_key=ck.ACCESS_SECRET_KEY,
+        config=Config(signature_version='s3v4')
+    )
+    s3.Bucket(ck.BUCKET_NAME).put_object(
+        Key=file_name, Body=data, ContentType='image/jpg')
 
 def capture(camid):
     now = dt.datetime.now().strftime("%Y-%m-%d %H-%M-%S")
@@ -27,7 +43,12 @@ def capture(camid):
         print('frame is not exist')
         return None
 
-    cv2.imwrite( "./" + homegarden_barcode +"/"+now+'.jpg', frame, params=[cv2.IMWRITE_JPEG_QUALITY, 60])
+    file_name = homegarden_barcode +"/"+now+'.jpg'
+    cv2.imwrite(file_name, frame, params=[cv2.IMWRITE_JPEG_QUALITY, 60])
+    upload_img_to_s3(file_name)
+    os.remove(file_name)
+
+
     cam.release()
 
 def mainloop():
