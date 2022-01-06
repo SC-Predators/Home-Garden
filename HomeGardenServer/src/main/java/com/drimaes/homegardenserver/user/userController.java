@@ -72,10 +72,10 @@ public class userController {
     }
     /**
      * 가입자의 중복 ID입력 확인!
-     * [get] app/users/sign-up
+     * [Post] app/users/sign-up
      * **/
     @ResponseBody
-    @GetMapping("/sign-up")
+    @PostMapping("/sign-up/checkID")
     public BaseResponse<String> isDuplicatedUser(@RequestBody GetIsDuplicatedUserReq getIsDuplicatedUserReq) {
         if (getIsDuplicatedUserReq.getClientID() == null) {
             return new BaseResponse<>(POST_USERS_EMPTY_CLIENTID);
@@ -92,7 +92,7 @@ public class userController {
      * [get] app/users/plant/nickname
      */
     @ResponseBody
-    @GetMapping("/plant/nickname")
+    @PostMapping("/plant/nickname")
     public BaseResponse<GetUserPlantNickNameRes> getUserPlantNickNameWithCLIENTID(@RequestBody GetUserPlantNickNameReq getUserPlantNickNameReq){
         if(getUserPlantNickNameReq.getClientID() == null){
             return new BaseResponse<>(USERS_EMPTY_USER_ID);
@@ -125,7 +125,7 @@ public class userController {
      * [get] http://localhost:23628/app/users/plant/present
      */
     @ResponseBody
-    @GetMapping("plant/present")
+    @PostMapping("plant/present")
     public BaseResponse<GetPlantStatusRes> getPresentPlantStatus(@RequestBody GetPresentPlantStatusReq getPresentPlantStatusReq){
         if(getPresentPlantStatusReq.getClientID() == null){
             return new BaseResponse<>(USERS_EMPTY_USER_ID);
@@ -143,7 +143,7 @@ public class userController {
      * [get] http://localhost:23628/app/users/plant/history
      */
     @ResponseBody
-    @GetMapping("plant/history")
+    @PostMapping("plant/history")
     public BaseResponse<List<GetPlantStatusRes>> getHistoryPlantStatus(@RequestBody GetHistoryPlantStatusReq getHistoryPlantStatusReq){
         if(getHistoryPlantStatusReq.getClientID()==null){
             return new BaseResponse<>(USERS_EMPTY_USER_ID);
@@ -156,6 +156,23 @@ public class userController {
         }
     }
 
+    /**
+     * 식물 모드 변경하기
+     * [patch] http://218.152.140.80:23628/app/users/plant/mode
+     */
+    @ResponseBody
+    @PatchMapping("plant/mode")
+    public BaseResponse<String> postPlantMode(@RequestBody PatchModeReq patchModeReq){
+        if(patchModeReq.getClientID()==null){
+            return new BaseResponse<>(USERS_EMPTY_USER_ID);
+        }
+        try{
+            String postModRes = userService.patchPlantMode(patchModeReq);
+            return new BaseResponse<>(postModRes);
+        }catch (BaseException exception){
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
 
 
 }

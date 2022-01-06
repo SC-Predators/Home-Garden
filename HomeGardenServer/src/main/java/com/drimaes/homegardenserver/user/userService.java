@@ -30,13 +30,7 @@ public class userService {
     public userService(userDAO userDao, userProvider userProvider) {
         this.userDao = userDao;
         this.userProvider = userProvider;
-    } // JWT부분은 7주차에 다루므로 모르셔도 됩니다!
-    /*@Autowired //readme 참고
-    public userService(userDAO userDao, userProvider userProvider, JwtService jwtService) {
-        this.userDao = userDao;
-        this.userProvider = userProvider;
-        this.jwtService = jwtService; // JWT부분은 7주차에 다루므로 모르셔도 됩니다!
-    }*/
+    }
     // ******************************************************************************
     // 회원가입(POST)
     public PostUserRes createUser(PostUserReq postUserReq) throws BaseException {
@@ -54,11 +48,6 @@ public class userService {
             int userIdx = userDao.createUser(postUserReq);
             return new PostUserRes(userIdx);
 
-//  *********************************************************************
-//            //jwt 발급.
-//            String jwt = jwtService.createJwt(userIdx);
-//            return new PostUserRes(jwt,userIdx);
-//  *********************************************************************
         } catch (Exception exception) { // DB에 이상이 있는 경우 에러 메시지를 보냅니다.
             throw new BaseException(DATABASE_ERROR);
         }
@@ -72,6 +61,17 @@ public class userService {
                 throw new BaseException(MODIFY_FAIL_USERNAME);
             }
         } catch (Exception exception) { // DB에 이상이 있는 경우 에러 메시지를 보냅니다.
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    // 모드 수정(Patch)
+    public String patchPlantMode(PatchModeReq patchModeReq) throws BaseException{
+        try{
+            int result = userDao.patchPlantMode(patchModeReq);
+            if(result==1) return("변경 성공");
+            else return ("변경 실패");
+        }catch (Exception exception) { // DB에 이상이 있는 경우 에러 메시지를 보냅니다.
             throw new BaseException(DATABASE_ERROR);
         }
     }
