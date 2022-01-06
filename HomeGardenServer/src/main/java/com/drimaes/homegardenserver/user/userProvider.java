@@ -4,6 +4,7 @@ import com.drimaes.homegardenserver.config.BaseException;
 import com.drimaes.homegardenserver.config.secret.Secret;
 import com.drimaes.homegardenserver.user.model.*;
 import com.drimaes.homegardenserver.utils.AES128;
+import com.fasterxml.jackson.databind.ser.Serializers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,9 +105,9 @@ public class userProvider {
     }
 
     //Test용 회원 홈가든 식물 닉네임 가져오기 메서드
-    public GetUserPlantNickNameRes getUserPlantNickName(GetUserPlantNickNameReq getUserPlantNickNameReq) throws BaseException{
+    public GetUserPlantNickNameRes getUserPlantNickName(GetUserReq getUserReq) throws BaseException{
         try{
-            GetUserPlantNickNameRes getUserPlantNickNameRes = userDao.getClienPlantNickName(getUserPlantNickNameReq);
+            GetUserPlantNickNameRes getUserPlantNickNameRes = userDao.getClienPlantNickName(getUserReq);
             return getUserPlantNickNameRes;
         } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
@@ -140,6 +141,16 @@ public class userProvider {
         try{
             List<GetPlantStatusRes> getPlantStatusRes= userDao.getHistoryPlantStatus(getHistoryPlantStatusReq);
             return getPlantStatusRes;
+        } catch (Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    //현재 식물 모드 반환
+    public PostUserModeRes postPlantMode(GetUserReq getUserReq) throws BaseException{
+        try{
+            PostUserModeRes postUserModeRes = userDao.postPlantMode(getUserReq);
+            return postUserModeRes;
         } catch (Exception exception){
             throw new BaseException(DATABASE_ERROR);
         }

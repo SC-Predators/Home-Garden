@@ -93,12 +93,12 @@ public class userController {
      */
     @ResponseBody
     @PostMapping("/plant/nickname")
-    public BaseResponse<GetUserPlantNickNameRes> getUserPlantNickNameWithCLIENTID(@RequestBody GetUserPlantNickNameReq getUserPlantNickNameReq){
-        if(getUserPlantNickNameReq.getClientID() == null){
+    public BaseResponse<GetUserPlantNickNameRes> getUserPlantNickNameWithCLIENTID(@RequestBody GetUserReq getUserReq){
+        if(getUserReq.getClientID() == null){
             return new BaseResponse<>(USERS_EMPTY_USER_ID);
         }
         try{
-            GetUserPlantNickNameRes getUserPlantNickNameRes = userProvider.getUserPlantNickName(getUserPlantNickNameReq);
+            GetUserPlantNickNameRes getUserPlantNickNameRes = userProvider.getUserPlantNickName(getUserReq);
             return new BaseResponse<>(getUserPlantNickNameRes);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
@@ -157,12 +157,31 @@ public class userController {
     }
 
     /**
+     * 식물 모드 가져오기
+     * [post] http://218.152.140.80:23628/app/users/plant/mode
+     */
+    @ResponseBody
+    @PostMapping("plant/mode")
+    public BaseResponse<PostUserModeRes> postPlantMode(@RequestBody GetUserReq getUserReq){
+        if(getUserReq.getClientID() == null){
+            return new BaseResponse<>(USERS_EMPTY_USER_ID);
+        }
+        try{
+            PostUserModeRes postUserModeRes = userProvider.postPlantMode(getUserReq);
+            System.out.println(postUserModeRes);
+            return new BaseResponse<>(postUserModeRes);
+        }catch (BaseException exception){
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+    /**
      * 식물 모드 변경하기
      * [patch] http://218.152.140.80:23628/app/users/plant/mode
      */
     @ResponseBody
     @PatchMapping("plant/mode")
-    public BaseResponse<String> postPlantMode(@RequestBody PatchModeReq patchModeReq){
+    public BaseResponse<String> patchPlantMode(@RequestBody PatchModeReq patchModeReq){
         if(patchModeReq.getClientID()==null){
             return new BaseResponse<>(USERS_EMPTY_USER_ID);
         }
@@ -173,6 +192,8 @@ public class userController {
             return new BaseResponse<>((exception.getStatus()));
         }
     }
+
+
 
 
 }

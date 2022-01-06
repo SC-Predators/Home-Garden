@@ -73,9 +73,9 @@ public class userDAO {
     }
 
     //식물 닉네임 확인
-    public GetUserPlantNickNameRes getClienPlantNickName(GetUserPlantNickNameReq getUserPlantNickNameReq){
+    public GetUserPlantNickNameRes getClienPlantNickName(GetUserReq getUserReq){
         String getUserQuery = "SELECT plantNickName FROM Homegarden_Client WHERE clientID = ?";
-        String getClientID = getUserPlantNickNameReq.getClientID();
+        String getClientID = getUserReq.getClientID();
 
         return this.jdbcTemplate.queryForObject(getUserQuery,
                 (rs, rowNum) -> new GetUserPlantNickNameRes(
@@ -236,6 +236,19 @@ public class userDAO {
 
         this.jdbcTemplate.update(updateModeQuery, updateModeParams);
         return this.jdbcTemplate.update(updateDesiredStateQuery, clientID);
+    }
+
+    //유저 모드 가져오기
+    public PostUserModeRes postPlantMode(GetUserReq getUserReq){
+        String getModeQuery = "SELECT * FROM Desired_state DS, Homegarden_Client HC WHERE  HC.clientID = DS.clientID  AND DS.clientID = ?;";
+        String clientID = getUserReq.getClientID();
+
+        return this.jdbcTemplate.queryForObject(getModeQuery,
+                (rs, rowNum) -> new PostUserModeRes(
+                        rs.getString("mode"),
+                        rs.getInt("desired_light"),
+                        rs.getInt("desired_humidity")),
+                        clientID);
     }
 
 }
