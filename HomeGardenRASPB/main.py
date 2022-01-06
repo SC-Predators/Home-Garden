@@ -1,3 +1,6 @@
+import logging
+import sys
+
 homegarden_barcode = "homegarden1"
 
 import boto3
@@ -6,9 +9,24 @@ import configKey as ck
 import cv2
 import datetime as dt
 import os
+import base64
+import requests
+import pymysql
 
 # pip install boto3
 # Module not found err: pip install opencv-python
+
+#--------------------------------rds연결 설정
+def connect_RDS(host, port, username, password, database):
+    try:
+        conn = pymysql.connect(ck.host, user=username, passwd=password, db=database, port=port, use_unicode=True, charset= 'utf8')
+        cursor = conn.cursor()
+
+    except:
+        logging.error("RDS에 연결되지 않았습니다.")
+        sys.exit(1)
+    return conn, cursor
+#--------------------------------
 
 def createFolder(directory):
     try:
@@ -60,3 +78,4 @@ def mainloop():
 if __name__ == '__main__':
     createFolder("./" + homegarden_barcode)
     mainloop()
+    conn, cursor = connect_RDS(ck.host, ck.port, ck.username, ck.password, ck.database)
