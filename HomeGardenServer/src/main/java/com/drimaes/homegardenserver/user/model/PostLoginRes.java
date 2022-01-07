@@ -13,5 +13,7 @@ import lombok.Setter;
  */
 public class PostLoginRes {
     private String homeGarden_barcode;
+    private String plantNickName;
     private String userStatus;
 }
+

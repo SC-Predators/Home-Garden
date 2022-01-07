@@ -113,30 +113,31 @@ public class userDAO {
     }
 
 
-    // 로그인: 해당 email에 해당되는 user의 암호화된 비밀번호 값을 가져온다.
+    // 로그인: 해당 clientID에 해당되는 user의 암호화된 비밀번호 값을 가져온다.
     public User getPwd(PostLoginReq postLoginReq) {
-        String getPwdQuery = "select * from Homegarden_Client where clientID = ?"; // 해당 email을 만족하는 User의 정보들을 조회한다.
-        String getPwdParams = postLoginReq.getClientID(); // 주입될 email값을 클라이언트의 요청에서 주어진 정보를 통해 가져온다.
+        String getPwdQuery = "select * from Homegarden_Client where clientID = ?";
+        String getPwdParams = postLoginReq.getClientID();
 
         return this.jdbcTemplate.queryForObject(getPwdQuery,
                 (rs, rowNum) -> new User(
                         rs.getString("homegardenID"),
+                        rs.getString("plantNickName"),
                         rs.getString("clientPW"),
-                        rs.getString("activeStatus")), // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
+                        rs.getString("activeStatus")),
                 getPwdParams
-        ); // 한 개의 회원정보를 얻기 위한 jdbcTemplate 함수(Query, 객체 매핑 정보, Params)의 결과 반환
+        );
     }
 
     // User 테이블에 존재하는 전체 유저들의 정보 조회
     public List<GetUserRes> getUsers() {
-        String getUsersQuery = "select * from User"; //User 테이블에 존재하는 모든 회원들의 정보를 조회하는 쿼리
+        String getUsersQuery = "select * from User";
         return this.jdbcTemplate.query(getUsersQuery,
                 (rs, rowNum) -> new GetUserRes(
                         rs.getInt("userIdx"),
                         rs.getString("nickname"),
                         rs.getString("Email"),
-                        rs.getString("password")) // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
-        ); // 복수개의 회원정보들을 얻기 위해 jdbcTemplate 함수(Query, 객체 매핑 정보)의 결과 반환(동적쿼리가 아니므로 Parmas부분이 없음)
+                        rs.getString("password"))
+        );
     }
 
     // 해당 nickname을 갖는 유저들의 정보 조회

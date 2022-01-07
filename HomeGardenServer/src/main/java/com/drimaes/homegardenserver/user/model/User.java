@@ -12,6 +12,7 @@ import lombok.*;
  */
 public class User {
     private String homeGarden_barcode;
+    private String plantNickname;
     private String password;
     private String status;
 }
