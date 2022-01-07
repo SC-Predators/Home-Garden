@@ -22,3 +22,5 @@ sampleImgs/
 new_user_credentials.csv
 
 HomeGardenRASPB/configKey.py
+
+HomeGardenRASPB/dbConnection.py
