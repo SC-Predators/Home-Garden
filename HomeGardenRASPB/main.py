@@ -90,7 +90,7 @@ def mainloop():
     conn, cursor = connect_RDS(ck.host, ck.port, ck.username, ck.password, ck.database)
     while 1:
         now = dt.datetime.now().strftime("%Y-%m-%d %H-%M-%S")
-        if dt.datetime.now().second%10 == 0:
+        if dt.datetime.now().minute%10 == 0:
             file_name = capture(0, now)
             update_with_imgurl(conn, cursor, file_name, now)
 
