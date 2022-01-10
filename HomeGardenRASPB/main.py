@@ -78,7 +78,7 @@ def update_with_imgurl(conn, cursor, file_name, now):
         rd.randint(10, 100),
         rd.randint(10, 100),
         rd.randint(10, 100),
-        "https://homegarden-images.s3.ap-northeast-2.amazonaws.com/homegarden1/" + now + ".jpg"
+        ck.homegarden_bucket + now + ".jpg"
     )
     print("Query Updated: " + updateQuery)
 
@@ -86,13 +86,30 @@ def update_with_imgurl(conn, cursor, file_name, now):
     conn.commit()
     os.remove(file_name)
 
+def get_desired_state(conn, cursor):
+    get_desired_state_query = f"SELECT desired_humidity, desired_light FROM Desired_state where homegardenID = \"{homegarden_barcode}\" "
+    print(get_desired_state_query)
+    cursor.execute(get_desired_state_query)
+    result = cursor.fetchall()
+    conn.close()
+    return (result[0][0], result[0][1])
+
 def mainloop():
     conn, cursor = connect_RDS(ck.host, ck.port, ck.username, ck.password, ck.database)
     while 1:
         now = dt.datetime.now().strftime("%Y-%m-%d %H-%M-%S")
+        present_light = 100
+        present_humidity = 200
         if dt.datetime.now().minute%10 == 0:
             file_name = capture(0, now)
             update_with_imgurl(conn, cursor, file_name, now)
+            desired_light, desired_humidity = get_desired_state(conn, cursor)
+            if present_light < desired_light:
+                #do someThing
+                print("#do something")
+            if present_humidity < desired_humidity:
+                #do someThing
+                print("#do something")
 
 if __name__ == '__main__':
     createFolder("./" + homegarden_barcode)
