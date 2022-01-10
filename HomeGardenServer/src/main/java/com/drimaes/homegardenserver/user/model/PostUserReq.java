@@ -11,4 +11,7 @@ public class PostUserReq {
     private String clientID;
     private String password;
     private String plantNickName;
+    private String mode;
+    private String desired_illuminance;
+    private String desired_humidity;
 }

@@ -60,13 +60,21 @@ public class userDAO {
 
     // 회원가입
     public int createUser(PostUserReq postUserReq) {
-        String createUserQuery = "insert into Homegarden_Client (homegardenID,clientID, clientPW, plantNickName) VALUES (?,?,?,?)"; // 실행될 동적 쿼리문
-        String insertDesiredStateQuery = "INSERT INTO Desired_state(homegardenID, clientID) VALUES (?, ?);";
-        Object[] createUserParams = new Object[]{postUserReq.getHomegarden_barcode(),postUserReq.getClientID(), postUserReq.getPassword(), postUserReq.getPlantNickName()}; // 동적 쿼리의 ?부분에 주입될 값
-        Object[] insertDesiredStateParams = new Object[]{postUserReq.getHomegarden_barcode(), postUserReq.getClientID()};
-
+        String createUserQuery = "insert into Homegarden_Client (homegardenID,clientID, clientPW, plantNickName, mode) VALUES (?,?,?,?,?)"; // 실행될 동적 쿼리문
+        Object[] createUserParams = new Object[]{postUserReq.getHomegarden_barcode(),postUserReq.getClientID(), postUserReq.getPassword(), postUserReq.getPlantNickName(), postUserReq.getMode()}; // 동적 쿼리의 ?부분에 주입될 값
+        String insertDesiredStateQuery = "INSERT INTO Desired_state(homegardenID, clientID, desired_light, desired_humidity) VALUES (?, ?, ?, ?);";
         this.jdbcTemplate.update(createUserQuery, createUserParams);
-        this.jdbcTemplate.update(insertDesiredStateQuery, insertDesiredStateParams);
+
+        if(postUserReq.getMode() == "M")
+        {
+            Object[] insertDesiredStateParams = new Object[]{postUserReq.getHomegarden_barcode(), postUserReq.getClientID(), postUserReq.getDesired_illuminance(), postUserReq.getDesired_humidity()};
+            this.jdbcTemplate.update(insertDesiredStateQuery, insertDesiredStateParams);
+        }
+        else if(postUserReq.getMode() == "A")
+        {
+            Object[] insertDesiredStateParams = new Object[]{postUserReq.getHomegarden_barcode(), postUserReq.getClientID(), 200, 50};
+            this.jdbcTemplate.update(insertDesiredStateQuery, insertDesiredStateParams);
+        }
 
         String lastInserIdQuery = "select last_insert_id()"; // 가장 마지막에 삽입된(생성된) id값은 가져온다.
         return this.jdbcTemplate.queryForObject(lastInserIdQuery, int.class); // 해당 쿼리문의 결과 마지막으로 삽인된 유저의 userIdx번호를 반환한다.
@@ -206,13 +214,13 @@ public class userDAO {
         String getImgQuery = "SELECT img FROM HOMEGARDEN.HistoryVIEW WHERE img IS NOT NULL ORDER BY  writeTime DESC LIMIT 1;";
         String dropViewQuery = "DROP VIEW HistoryVIEW;";
 
-        System.out.println(makeHistoryView);
+        //System.out.println(makeHistoryView);
         this.jdbcTemplate.execute(makeHistoryView);
 
 
         String mostPresentImgURL = this.jdbcTemplate.queryForObject(getImgQuery, String.class);
 
-        System.out.println(mostPresentImgURL);
+        //System.out.println(mostPresentImgURL);
 
         resultList =  this.jdbcTemplate.query(getStateQuery,
                 (rs, rowNum) -> new GetPlantStatusRes(
