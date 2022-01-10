@@ -13,7 +13,6 @@ import base64
 import requests
 import random as rd
 import pymysql
-pymysql.install_as_MySQLdb()
 
 def get_desired_state(conn, cursor):
     get_desired_state_query = f"SELECT desired_humidity, desired_light FROM Desired_state where homegardenID = \"{homegarden_barcode}\" "

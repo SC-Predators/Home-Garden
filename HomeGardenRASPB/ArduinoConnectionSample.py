@@ -1,5 +1,7 @@
 import serial
-ser = serial.Serial("/dev/usb 1-1.2")
+ 
+ser = serial.Serial('/dev/ttyACM0', 9600)
+ 
 while 1:
-    print(ser.readlines())
+    print (ser.readline())
     
