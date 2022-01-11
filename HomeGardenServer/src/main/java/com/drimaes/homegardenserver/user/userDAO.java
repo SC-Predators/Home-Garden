@@ -218,6 +218,7 @@ public class userDAO {
         System.out.println("히스토리 보기");
         System.out.println("ClientID: " + clientID);
         System.out.printf("[Month: %s, Date: %s, Hour: %s, Minute: %s]",
+
                             getHistoryPlantStatusReq.getMonth(), getHistoryPlantStatusReq.getDate(),getHistoryPlantStatusReq.getHour(), getHistoryPlantStatusReq.getMinute());
         System.out.println("\n=====================");
         //System.out.println(makeHistoryView);
