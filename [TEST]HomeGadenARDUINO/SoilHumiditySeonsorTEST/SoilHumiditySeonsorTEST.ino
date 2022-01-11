@@ -14,8 +14,11 @@ void setup() {
 void loop() {
   
   float Soil_moisture = analogRead(A1);  
+  int light = analogRead(A0);
   float humidity_rate = 100-((Soil_moisture-_MIN)/(_MAX-_MIN))*100;
+  
   result_json["soil_humid"] = humidity_rate;
+  result_json["light"] = light;
   
   serializeJson(result_json, Serial);      
   Serial.println("\n=================");
