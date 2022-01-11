@@ -1,20 +1,22 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:test1/API.dart';
 import 'main.dart';
-
+import 'dart:convert';
 
 class SignUP extends StatefulWidget{
-  SignUP({Key? key}) : super(key: key);
+  SignUP({Key? key, required this.title}) : super(key: key);
+  String title;
 
   @override
-  Sign_up createState() => Sign_up();
-
+  State<SignUP> createState() => _SignUP();
 }
 
-class Sign_up extends State<SignUP> {
-  String name = "Smart Home Garden";
+class _SignUP extends State<SignUP> {
   bool _autoChecked = true;
   bool _manualChecked = false;
+
   TextEditingController IDcontroll = TextEditingController();
   TextEditingController Passcontroll = TextEditingController();
   TextEditingController Plantcontroll = TextEditingController();
@@ -28,22 +30,42 @@ class Sign_up extends State<SignUP> {
       appBar: AppBar(
         centerTitle: true,
         backgroundColor: Color(0xffF3E5F5),
-        title: Text("Smart Home Garden", style: TextStyle(fontSize: 20, color: Colors.grey),),
+        title: Text("Smart Home Garden",
+          style: TextStyle(fontSize: 20, color: Colors.grey),),
       ),
 
       body: Center(
         child: Column(
           children: <Widget>[
             Container(
-              margin: EdgeInsets.symmetric(vertical: 10,horizontal: 20),
-              child: TextField(
-                controller: IDcontroll,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: "User name",
-                ),
+              child: Row(
+                children: <Widget>[
+                  Container(
+                    width: 300,
+                    margin: EdgeInsets.only(
+                        left: 20, top: 10, right: 10, bottom: 10),
+                    child: TextField(
+                      controller: IDcontroll,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: "User name",
+                      ),
+                    ),
+                  ),
+
+                  Container(
+                    child: TextButton(
+                      onPressed: () {
+                        duplicateId(IDcontroll.text);
+                      },
+                      child: Text("중복확인",
+                        style: TextStyle(fontSize: 15, color: Colors.grey),),
+                    ),
+                  ),
+                ],
               ),
             ),
+
 
             Container(
               margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
@@ -154,21 +176,33 @@ class Sign_up extends State<SignUP> {
 
             Container(
               color: Color(0xffFFF59D),
-              padding: EdgeInsets.symmetric(vertical: 3,horizontal: 150),
+              padding: EdgeInsets.symmetric(vertical: 3, horizontal: 150),
               margin: EdgeInsets.symmetric(vertical: 10),
-              // child: ElevatedButton(
-              //   child: Text("FINISH"),
-              //   onPressed: () {
-              //     Navigator.pop(context);
-              //   },
-              //
-              // ),
-
               child: TextButton(
-                onPressed: (){
-                  Navigator.pop(context);
+                onPressed: () async {
+                  var data = {
+                    "homegarden_barcode": Barcodecontroll.text,
+                    "clientnID": IDcontroll.text,
+                    "password": Passcontroll.text,
+                    "plantNickName": Plantcontroll.text
+                  };
+
+                  String url = "http://218.152.140.80:23628/app/users/sign-up/checkID";
+                  var body = json.encode(data);
+                  http.Response res = await http.post(url,
+                      headers: {"Content-Type": "application/json"},
+                      body: body);
+                  if (res.statusCode == 200) {
+                    String reponseBody = utf8.decode(res.bodyBytes);
+                    print(reponseBody);
+                    Navigator.pop(context);
+                  }
+                  else {
+                    print("failed");
+                  }
                 },
-                child: Text("FINISH", style: TextStyle(fontSize: 20, color: Colors.grey),),
+                child: Text("FINISH",
+                  style: TextStyle(fontSize: 20, color: Colors.grey),),
               ),
             ),
           ],
