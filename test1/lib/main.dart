@@ -1,11 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:test1/API.dart';
 import 'package:test1/Sign_up.dart';
+import 'API.dart';
 import 'package:test1/mainPage.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'HomePage.dart';
-
 
 void main() {
   runApp(const MyApp());
@@ -42,7 +43,12 @@ class _MyHomePageState extends State<MyHomePage> {
   TextEditingController cont = TextEditingController();
   TextEditingController cont2 = TextEditingController();
 
+  String id = '';
+  String pass = '';
+
+
   String username = '';
+  String sentdata = '';
 
   @override
   Widget build(BuildContext context) {
@@ -65,11 +71,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     border: OutlineInputBorder(),
                     labelText: 'user name',
                   ),
-                  onChanged: (text) {
-                    username = text;
-                  },
                 )
             ),
+
             Container(
                 margin: EdgeInsets.only(
                     left: 20, right: 20, bottom: 40, top: 10),
@@ -79,56 +83,20 @@ class _MyHomePageState extends State<MyHomePage> {
                     border: OutlineInputBorder(),
                     labelText: 'password',
                   ),
-                  onChanged: (text) {
-                    username = text;
-                  },
                 )
             ),
 
-            // OutlinedButton(
-            //     onPressed: (){
-            //       title : 'my tomato';
-            //       Navigator.push(context, MaterialPageRoute(builder: (_)  => mainPage()));
-            //
-            //     },
-            //     child: Padding(
-            //       padding: EdgeInsets.symmetric(vertical: 20, horizontal: 28),
-            //       child:Text("LOGIN"),
-            //     ),
-            //
-            // ),
 
             Container(
               padding: EdgeInsets.symmetric(vertical: 5, horizontal: 100),
               margin: EdgeInsets.symmetric(vertical: 10),
               color: Color(0xffE6EE9C),
               child: TextButton(
-                onPressed: () {
-                // async {
-                //
-                //   var data = {
-                //     "clientID" : "jjh63360",
-                //     "clientPW" : "123@"
-                //   };
-                //   String url = "http://218.152.140.80:23628/app/users/log-in";
-                //
-                //   var body = json.encode(data);
-                //   http.Response res = await http.post(url,
-                //     headers: {"Content-Type" : "application/json"},
-                //     body: body
-                //   );
-                //   print(res.statusCode);
-                //   print(res.body);
-
-                  Navigator.push(
-                      context, MaterialPageRoute(builder: (_) => mainPage()));
+                onPressed: (){
+                  checkId(cont, cont2, context);
+                  print('success');
                 },
-                child: Text(
-                  "LOGIN", style: TextStyle(fontSize: 25, color: Colors.grey),),
-                // style: TextButton.styleFrom(
-                //   backgroundColor: Colors.amberAccent,
-                // ),
-
+                  child: Text("LOGIN", style: TextStyle(fontSize: 25, color: Colors.grey),),
               ),
             ),
 
@@ -137,26 +105,16 @@ class _MyHomePageState extends State<MyHomePage> {
               margin: EdgeInsets.symmetric(vertical: 10),
               color: Color(0xffE6EE9C),
               child: Container(
-                // child:OutlinedButton(
-                //   onPressed: (){
-                //     Navigator.push(context, MaterialPageRoute(builder: (_) => SignUP()));
-                //   },
-                //   child: Padding(
-                //     padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-                //     child:Text("SIGN UP"),
-                //   ),
-                // ),
-
                 child: TextButton(
                   onPressed: () {
                     Navigator.push(
-                        context, MaterialPageRoute(builder: (_) => SignUP()));
+                        context, MaterialPageRoute(builder: (_) => SignUP(title: 'smart home garden',)));
                   },
                   child: Text("SIGN UP",
                     style: TextStyle(fontSize: 25, color: Colors.grey),),
                 ),
+                ),
               ),
-            ),
           ],
         ),
       ), // This trailing comma makes auto-formatting nicer for build methods.
