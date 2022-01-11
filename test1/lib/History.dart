@@ -12,7 +12,12 @@ class myHistory extends StatefulWidget {
   @override
   State<myHistory> createState() => _MyHistory();
 }
-
+// class addList extends _MyHistory {
+//   for (int i = 0; i < 31; i++) {
+//     print(i);
+//   };
+//
+// }
 class _MyHistory extends State<myHistory> {
 
   int bottomSelect = 0;
@@ -59,11 +64,6 @@ class _MyHistory extends State<myHistory> {
   final List<String> min_items = ['00', '30'];
   Object? m_select = '00';
 
-  // final List<int> Ditems;
-  // for (int i = 1; i >= 31; i++){
-  // Ditems.add(i);
-  // }
-
 
   @override
   Widget build(BuildContext context) {
@@ -78,8 +78,6 @@ class _MyHistory extends State<myHistory> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-
-
             Container(
               alignment: Alignment(-0.6, 0.7),
               child: Text("Select Date", style: TextStyle(fontSize: 25),),
@@ -215,15 +213,10 @@ class _MyHistory extends State<myHistory> {
               padding: EdgeInsets.symmetric(vertical: 5, horizontal: 150),
               margin: EdgeInsets.only(top: 50),
               color: Color(0xffFFF59D),
-              // child: OutlinedButton(
-              //   onPressed: () {
-              //     Navigator.push(
-              //         context, MaterialPageRoute(builder: (_) => SignUP()));
-              //   },
               child: TextButton(
                 onPressed: (){
                   setState(() {
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => home()));
+                    // Navigator.push(context, MaterialPageRoute(builder: (_) => home(title: 'mytomato',)));
                   });
                 },
                 child: Text("OK", style: TextStyle(fontSize: 20, color: Colors.grey), ),
