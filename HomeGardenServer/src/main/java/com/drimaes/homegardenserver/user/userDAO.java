@@ -190,6 +190,7 @@ public class userDAO {
 
         return this.jdbcTemplate.queryForObject(getPresentStateQuery,
                 (rs, rowNum) -> new GetPlantStatusRes(
+                        "OK",
                         mostPresentImgURL,
                         rs.getInt("humidity"),
                         rs.getInt("light"),
@@ -205,6 +206,13 @@ public class userDAO {
         //historyTime 에시: '2022-01-04 05:30:03';
         String historyTime = "2022-" + getHistoryPlantStatusReq.getMonth() + "-" + getHistoryPlantStatusReq.getDate() +" "+getHistoryPlantStatusReq.getHour()+":"+getHistoryPlantStatusReq.getMinute()+":00";
         String clientID = getHistoryPlantStatusReq.getClientID();
+        String checkQuery = String.format("SELECT COUNT(*) FROM Present_state PS, Homegarden_Client HC " +
+                                          "WHERE PS.homegardenID=HC.homegardenID AND HC.clientID = \"%s\" AND writeTime < \'%s\';", clientID, historyTime);
+        if(this.jdbcTemplate.queryForObject(checkQuery, int.class)==0)
+        {
+            return new GetPlantStatusRes("이전 기록이 없습니다.", "0", 0, 0, 0, 0);
+        }
+
         String makeHistoryView = String.format("CREATE VIEW HistoryVIEW AS " +
                                                "SELECT writeTime, temperature, humidity, light, water_level, phStatus, img " +
                                                "FROM Present_state PS, Homegarden_Client HC " +
@@ -231,6 +239,7 @@ public class userDAO {
 
         GetPlantStatusRes getPlantStatusRes = this.jdbcTemplate.queryForObject(getStateQuery,
                 (rs, rowNum) -> new GetPlantStatusRes(
+                        "OK",
                         mostPresentImgURL,
                         rs.getInt("humidity"),
                         rs.getInt("light"),
