@@ -75,4 +75,15 @@ public class userService {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+    //자동 mode : mqtt 통신 시작
+    public String postManualPlantMode(PostManualStateReq postManualStateReq) throws BaseException{
+        try{
+            //String postManualModeRes = mqttConnection.postManualPlantMode(postManualStateReq);
+            String postManualModeRes = "아직 만드는 중... 일단  API 연결 테스트!";
+            return postManualModeRes;
+        } catch (Exception exception){
+            throw new BaseException((DATABASE_ERROR));
+        }
+    }
 }

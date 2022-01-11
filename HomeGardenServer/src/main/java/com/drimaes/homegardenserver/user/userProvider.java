@@ -155,4 +155,6 @@ public class userProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+
 }

@@ -193,6 +193,21 @@ public class userController {
         }
     }
 
+    /**
+     * 식물 수동 모드 변경하기
+     * [post] http://218.152.140.80:23628/app/users/plant/active
+     */
+    @ResponseBody
+    @PostMapping("plant/active")
+    public BaseResponse<String> postManualPlantMode(@RequestBody PostManualStateReq postManualStateReq){
+        try{
+            String postManualModeRes = userService.postManualPlantMode(postManualStateReq);
+            return new BaseResponse<>(postManualModeRes);
+        }catch (BaseException exception){
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
 
 
 
