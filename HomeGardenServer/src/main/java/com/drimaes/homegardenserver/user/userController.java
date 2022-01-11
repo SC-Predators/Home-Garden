@@ -144,12 +144,12 @@ public class userController {
      */
     @ResponseBody
     @PostMapping("plant/history")
-    public BaseResponse<List<GetPlantStatusRes>> getHistoryPlantStatus(@RequestBody GetHistoryPlantStatusReq getHistoryPlantStatusReq){
+    public BaseResponse<GetPlantStatusRes> getHistoryPlantStatus(@RequestBody GetHistoryPlantStatusReq getHistoryPlantStatusReq){
         if(getHistoryPlantStatusReq.getClientID()==null){
             return new BaseResponse<>(USERS_EMPTY_USER_ID);
         }
         try{
-            List<GetPlantStatusRes> getPlantStatusRes = userProvider.getHistoryPlantStatus(getHistoryPlantStatusReq);
+            GetPlantStatusRes getPlantStatusRes = userProvider.getHistoryPlantStatus(getHistoryPlantStatusReq);
             return new BaseResponse<>(getPlantStatusRes);
         }catch (BaseException exception){
             return new BaseResponse<>((exception.getStatus()));

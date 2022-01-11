@@ -200,7 +200,7 @@ public class userDAO {
 
 
     //시간이 주어졌을 때 식물 정보 반환
-    public List<GetPlantStatusRes> getHistoryPlantStatus(GetHistoryPlantStatusReq getHistoryPlantStatusReq){
+    public GetPlantStatusRes getHistoryPlantStatus(GetHistoryPlantStatusReq getHistoryPlantStatusReq){
         List<GetPlantStatusRes> resultList;
         //historyTime 에시: '2022-01-04 05:30:03';
         String historyTime = "2022-" + getHistoryPlantStatusReq.getMonth() + "-" + getHistoryPlantStatusReq.getDate() +" "+getHistoryPlantStatusReq.getHour()+":"+getHistoryPlantStatusReq.getMinute()+":00";
@@ -214,6 +214,12 @@ public class userDAO {
         String getImgQuery = "SELECT img FROM HOMEGARDEN.HistoryVIEW WHERE img IS NOT NULL ORDER BY  writeTime DESC LIMIT 1;";
         String dropViewQuery = "DROP VIEW HistoryVIEW;";
 
+        System.out.println("=====================");
+        System.out.println("히스토리 보기");
+        System.out.println("ClientID: " + clientID);
+        System.out.printf("[Month: %s, Date: %s, Hour: %s, Minute: %s]",
+                            getHistoryPlantStatusReq.getMonth(), getHistoryPlantStatusReq.getDate(),getHistoryPlantStatusReq.getHour(), getHistoryPlantStatusReq.getMinute());
+        System.out.println("\n=====================");
         //System.out.println(makeHistoryView);
         this.jdbcTemplate.execute(makeHistoryView);
 
@@ -222,7 +228,7 @@ public class userDAO {
 
         //System.out.println(mostPresentImgURL);
 
-        resultList =  this.jdbcTemplate.query(getStateQuery,
+        GetPlantStatusRes getPlantStatusRes = this.jdbcTemplate.queryForObject(getStateQuery,
                 (rs, rowNum) -> new GetPlantStatusRes(
                         mostPresentImgURL,
                         rs.getInt("humidity"),
@@ -232,7 +238,7 @@ public class userDAO {
                 );
 
         this.jdbcTemplate.execute(dropViewQuery);
-        return resultList;
+        return getPlantStatusRes;
     }
 
     //유저 모드 변경
