@@ -137,9 +137,9 @@ public class userProvider {
     }
 
     //과거 식물 상태 반환
-    public List<GetPlantStatusRes> getHistoryPlantStatus(GetHistoryPlantStatusReq getHistoryPlantStatusReq) throws BaseException{
+    public GetPlantStatusRes getHistoryPlantStatus(GetHistoryPlantStatusReq getHistoryPlantStatusReq) throws BaseException{
         try{
-            List<GetPlantStatusRes> getPlantStatusRes= userDao.getHistoryPlantStatus(getHistoryPlantStatusReq);
+            GetPlantStatusRes getPlantStatusRes= userDao.getHistoryPlantStatus(getHistoryPlantStatusReq);
             return getPlantStatusRes;
         } catch (Exception exception){
             throw new BaseException(DATABASE_ERROR);
