@@ -93,8 +93,8 @@ class _MyHomePageState extends State<MyHomePage> {
               color: Color(0xffE6EE9C),
               child: TextButton(
                 onPressed: (){
-                  checkId(cont, cont2, context);
-                  print('success');
+                  userID send;
+                  checkID(cont.text, cont2.text, context);
                 },
                   child: Text("LOGIN", style: TextStyle(fontSize: 25, color: Colors.grey),),
               ),

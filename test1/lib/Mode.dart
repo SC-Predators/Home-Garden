@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:test1/API.dart';
 import 'package:test1/Sign_up.dart';
 import 'HomePage.dart';
 import 'dart:convert';
@@ -8,52 +9,35 @@ import 'package:http/http.dart' as http;
 
 class myMode extends StatefulWidget {
   final String title; // 닉네임 이름
-  myMode({Key? key, required this.title}) : super(key: key);
+  String presentMode;
+  myMode({Key? key, required this.title, required this.presentMode}) : super(key: key);
+
+
+  bool _manualCheck = false;
+  bool _autoCheck = false;
 
   @override
   State<myMode> createState() => _myMode();
 
+
 }
-
-
 
 class _myMode extends State<myMode> {
   TextEditingController mode_illum = TextEditingController();
   TextEditingController mode_humidity = TextEditingController();
 
   Object? mode = 'auto';
-
-  bool _autoCheck = false;
-  bool _manualCheck = true;
-
-
-  void getMode(final String id) async {
-    print("getMode");
-    var data = {
-      "clientID": id
-    };
-    String url = "http://218.152.140.80:23628/app/users/plant/mode";
-    var body = json.encode(data);
-    http.Response res = await http.post(url,
-        body: body);
-      print("///");
-
-      String response = utf8.decode(res.bodyBytes);
-      Map<String, dynamic> user = jsonDecode(response);
-
-      print(user['isSuccess']);
-      if (user['result']['mode'] == 'M') {
-        print("today");
-        _autoCheck = true;
-        _manualCheck = false;
-      }
-
+  void fistMode() {
+    if (widget.presentMode == 'A') {
+      widget._autoCheck = true;
+    }
+    else {
+      widget._manualCheck = true;
+    }
   }
-
-
   @override
   Widget build(BuildContext context) {
-    getMode(widget.title);
+    fistMode();
     return Scaffold(
 
       appBar: AppBar(
@@ -68,21 +52,19 @@ class _myMode extends State<myMode> {
 
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Container(
-              child: Row(
+              Container(
+                child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Container(
-
                     child: Checkbox(
-
-                        value: _autoCheck,
+                        value: widget._autoCheck,
                         onChanged: (value) {
                           setState(() {
-                            _manualCheck = !value!;
-                            _autoCheck = value!;
-                            print("_autoCheck:" + _autoCheck.toString() +
-                                "\nmanualcheck:" + _manualCheck.toString());
+                            widget._manualCheck = !(value!);
+                            widget._autoCheck = value!;
+                            if (widget._autoCheck == true) widget.presentMode = 'A';
+                            else widget.presentMode = 'M';
                           });
                         }
                     ),
@@ -95,21 +77,22 @@ class _myMode extends State<myMode> {
               ),
 
             ),
-            Container(
+
+
+            Container( // 자동/수동 체크박스
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+
+            mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Container(
                       child: Checkbox(
-                          value: _manualCheck,
+                          value: widget._manualCheck,
                           onChanged: (value) {
                             setState(() {
-                              if (myMode == 'A') {
-                                _autoCheck = true;
-                                _manualCheck = false;
-                              }
-                              _manualCheck = value!;
-                              _autoCheck = !value!;
+                              widget._manualCheck = value!;
+                              widget._autoCheck = !value!;
+                              if (widget._autoCheck == true) widget.presentMode = 'A';
+                              else widget.presentMode = 'M';
                             });
                           }
                       ),
@@ -121,12 +104,12 @@ class _myMode extends State<myMode> {
                 )
             ),
 
-            if (_manualCheck == true)
+            if (widget._manualCheck == true)
 
               Container(
                   child: Column(
                     children: <Widget>[
-                      Container(
+                      Container( // 조도 텍스트 필드
                         margin: EdgeInsets.symmetric(
                             vertical: 10, horizontal: 20),
                         child: TextField(
@@ -138,7 +121,7 @@ class _myMode extends State<myMode> {
                         ),
                       ),
 
-                      Container(
+                      Container( // 습도 텍스트필드
                         margin: EdgeInsets.symmetric(
                             vertical: 10, horizontal: 20),
                         child: TextField(
@@ -152,14 +135,17 @@ class _myMode extends State<myMode> {
                     ],
                   )
               ),
-            Container(
+            Container( // SAVE 버튼
                 margin: EdgeInsets.only(top: 40),
                 padding: EdgeInsets.symmetric(vertical: 5, horizontal: 150),
                 color: Color(0xffFFF59D),
                 child: TextButton(
                   child: Text("SAVE",
                     style: TextStyle(fontSize: 25, color: Colors.grey),),
-                  onPressed: () {},
+                  onPressed: () {
+                    // saveMode(widget.title, mode, illuminace, humidity, context)
+
+                  },
                 )
             ),
           ],
@@ -168,3 +154,5 @@ class _myMode extends State<myMode> {
     );
   }
 }
+
+

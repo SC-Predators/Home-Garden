@@ -14,32 +14,31 @@ class innerData {
   innerData(this.humidity, this.illum, this.ph, this.depth);
 }
 
-class home extends StatefulWidget {
+class historyHome extends StatefulWidget {
 
-  const home({Key? key, required this.title,
-    required this.img,
-    required this.humidity,
-    required this.illuminace,
-    required this.waterDepth,
-    required this.ph}) : super(key: key);
-
-
+  const historyHome({Key? key, required this.title, required this.ph, required this.humidity, required this.illuminance, required this.depth, required this.img})
+      : super(key: key);
   // final innerData inner;
   final String title;
+  final String humidity;
+  final String illuminance;
+  final String ph;
+  final String depth;
   final String img;
-  final int humidity;
-  final int illuminace;
-  final int waterDepth;
-  final int ph;
 
   @override
-  State<home> createState() => _home();
+  State<historyHome> createState() => _historyHome();
 }
 
 
-class _home extends State<home> {
+class _historyHome extends State<historyHome> {
   bool _isChecked1 = false;
   bool _isChecked2 = false;
+  // var humidity = 20;
+  // var illum = 20;
+  // var ph = 20;
+  // var depth = 20;
+  // var bottomSelect = 3;
 
 
 
@@ -48,8 +47,8 @@ class _home extends State<home> {
   @override
   Widget build(BuildContext context) {
 
-    String url_picture = widget.img;
     return Scaffold(
+
       appBar: AppBar(
         centerTitle: true,
         title: Text(widget.title, style: TextStyle(fontSize: 20, color: Colors.grey),),
@@ -62,7 +61,7 @@ class _home extends State<home> {
 
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Image.network(url_picture, width: 800,height: 200,),
+            Image.network(widget.img, width: 800,height: 200,),
             Container(
 
               child: Text("Humidity : ${widget.humidity}" ),
@@ -77,7 +76,7 @@ class _home extends State<home> {
 
 
             Container(
-              child: Text("illuminate : ${widget.illuminace}"),
+              child: Text("illuminate : ${widget.illuminance}"),
               padding: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
               margin: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
               decoration: BoxDecoration(
@@ -87,7 +86,7 @@ class _home extends State<home> {
             ),
 
             Container(
-              child: Text("Water Depth : ${widget.waterDepth}" ),
+              child: Text("Water Depth : ${widget.depth}" ),
               padding: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
               margin: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
               decoration: BoxDecoration(

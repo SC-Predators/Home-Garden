@@ -42,7 +42,7 @@ class _myControl extends State<myControl> {
             Container(
               alignment: Alignment.centerLeft,
               padding: EdgeInsets.only(left: 100),
-              child: Text("Give Water"),
+              child: Text("Give Water", style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),),
             ),
 
             Container(
@@ -79,7 +79,7 @@ class _myControl extends State<myControl> {
               margin: EdgeInsets.only(top: 50),
               alignment: Alignment.centerLeft,
               padding: EdgeInsets.only(left: 100),
-              child: Text("LED Trun ON/OFF", style: TextStyle(fontSize: 20, color: Colors.redAccent),),
+              child: Text("LED Trun ON/OFF", style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),),
             ),
 
 
@@ -112,6 +112,20 @@ class _myControl extends State<myControl> {
 
                 ],
               ),
+            ),
+
+            Container( // SAVE 버튼
+                margin: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 125),
+                color: Color(0xffFFF59D),
+                child: TextButton(
+                  child: Text("ACTUAL",
+                    style: TextStyle(fontSize: 25, color: Colors.grey),),
+                  onPressed: () {
+                    // saveMode(widget.title, mode, illuminace, humidity, context)
+
+                  },
+                )
             ),
 
           ],
