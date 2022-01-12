@@ -81,13 +81,13 @@ void finishSignup (String barcode, String id, String password, String nickname, 
       "clientID": id,
       "password": password,
       "plantNickName": nickname,
-      "mode": mode,
+      "mode": 'M',
       "desired_illuminance" : illum,
       "desired_humidity" : humid
     };
   }
 
-  String url = "http://218.152.140.80:23628/app/users/sign-up/checkID";
+  String url = "http://218.152.140.80:23628/app/users/sign-up";
   var body = json.encode(data);
 
   http.Response res = await http.post(url,
@@ -186,11 +186,10 @@ void showData (userID sent, String id, BuildContext context) async{
     print(user);
     Navigator.push(context, MaterialPageRoute(builder: (_) => mainPage(userid: sent,
       humid: user['result']['humidity'],
-      illum: user['result']['illuminace'],
+      illum: user['result']['illuminate'],
       depth: user['result']['waterDepth'],
       ph: user['result']['ph'],
     img: user['result']['imgURL'],)));
-
   }
 
   else {
@@ -220,7 +219,7 @@ void controlData (String id, bool led, bool water) async {
     "water": water_present
   };
 
-  String url = "http://218.152.140.80:23628/app/users/plant/active";
+  String url = "https://sxo1vvu9ai.execute-api.ap-northeast-2.amazonaws.com/app/users/plant/active";
   var body = json.encode(data);
 
 

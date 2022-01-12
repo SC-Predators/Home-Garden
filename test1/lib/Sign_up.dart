@@ -29,7 +29,7 @@ class _SignUP extends State<SignUP> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        backgroundColor: Color(0xffF3E5F5),
+        backgroundColor: Color(0xffb2dfdb),
         title: Text("Smart Home Garden",
           style: TextStyle(fontSize: 20, color: Colors.grey),),
       ),
@@ -109,7 +109,7 @@ class _SignUP extends State<SignUP> {
                         value: _autoChecked,
                         onChanged: (value) {
                           setState(() {
-                            _manualChecked = !value!;
+                            _manualChecked = !(value!);
                             _autoChecked = value!;
                           });
                         }
@@ -125,7 +125,7 @@ class _SignUP extends State<SignUP> {
                               value: _manualChecked,
                               onChanged: (value) {
                                 setState(() {
-                                  _autoChecked = !value!;
+                                  _autoChecked = !(value!);
                                   _manualChecked = value!;
                                 });
                               }

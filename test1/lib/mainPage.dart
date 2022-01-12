@@ -77,7 +77,7 @@ class _mainPage extends State<mainPage>{
       body: _children[_currentIndex],
 
       bottomNavigationBar: BottomNavigationBar(
-        fixedColor: Color(0xffF3E5F5),
+        fixedColor: Color(0xff80cbc4),
         type: BottomNavigationBarType.fixed,
         onTap: _onTap,
         currentIndex: _currentIndex,
