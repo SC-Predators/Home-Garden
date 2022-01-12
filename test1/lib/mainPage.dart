@@ -33,7 +33,12 @@ class innerData {
 class mainPage extends StatefulWidget {
 
   final userID userid;
-  mainPage({required this.userid});
+  mainPage({required this.userid, required this.humid, required this.illum, required this.depth, required this.ph, required this.img});
+  final int humid;
+  final int illum;
+  final int depth;
+  final int ph;
+  final String img;
 
   @override
   State<mainPage> createState() => _mainPage();
@@ -53,28 +58,20 @@ class _mainPage extends State<mainPage>{
   String bottomSelect = '0';
   String mode = 'C';
 
-
-
-
-
   void _onTap (int index) async {
     setState(() {
       _currentIndex = index;
       print(_currentIndex);
     });
-    if  (_currentIndex == 0) { // 현재 작물 정보 가져오기
-      // innerData in = getData(widget.userid.userId);
-
-    }
   }
 
 
   Widget build (BuildContext context) {
 
     final List<Widget> _children = [
-      home(title: widget.userid.nickname,),
-      myHistory(title: widget.userid.nickname, ), // 오늘 날짜 전달?
-      myMode(title: widget.userid.nickname,), // 현재 모드 전달
+      home(title: widget.userid.nickname, humidity: widget.humid, illuminace: widget.illum, waterDepth: widget.depth, ph: widget.ph,img: widget.img,),
+      myHistory(title: widget.userid.nickname, userid: widget.userid.userId,), // 오늘 날짜 전달?
+      myMode(title: widget.userid.nickname, presentMode: widget.userid.userMode,), // 현재 모드 전달
       myControl(title: widget.userid.nickname)]; // 현재 장치 모드 전달
     return Scaffold(
       body: _children[_currentIndex],

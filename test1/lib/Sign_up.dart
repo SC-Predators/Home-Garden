@@ -43,7 +43,7 @@ class _SignUP extends State<SignUP> {
                   Container(
                     width: 300,
                     margin: EdgeInsets.only(
-                        left: 20, top: 10, right: 10, bottom: 10),
+                        left: 20, top: 20, right: 10, bottom: 10),
                     child: TextField(
                       controller: IDcontroll,
                       decoration: InputDecoration(
@@ -179,27 +179,9 @@ class _SignUP extends State<SignUP> {
               padding: EdgeInsets.symmetric(vertical: 3, horizontal: 150),
               margin: EdgeInsets.symmetric(vertical: 10),
               child: TextButton(
-                onPressed: () async {
-                  var data = {
-                    "homegarden_barcode": Barcodecontroll.text,
-                    "clientnID": IDcontroll.text,
-                    "password": Passcontroll.text,
-                    "plantNickName": Plantcontroll.text
-                  };
-
-                  String url = "http://218.152.140.80:23628/app/users/sign-up/checkID";
-                  var body = json.encode(data);
-                  http.Response res = await http.post(url,
-                      headers: {"Content-Type": "application/json"},
-                      body: body);
-                  if (res.statusCode == 200) {
-                    String reponseBody = utf8.decode(res.bodyBytes);
-                    print(reponseBody);
-                    Navigator.pop(context);
-                  }
-                  else {
-                    print("failed");
-                  }
+                onPressed: (){
+                  finishSignup(Barcodecontroll.text, IDcontroll.text, Passcontroll.text, Plantcontroll.text, _autoChecked, illumcontroll.text, humicontroll.text);
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => MyHomePage(title: 'smart home garden',)));
                 },
                 child: Text("FINISH",
                   style: TextStyle(fontSize: 20, color: Colors.grey),),

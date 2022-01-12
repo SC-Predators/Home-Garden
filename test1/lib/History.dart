@@ -1,12 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:test1/API.dart';
 import 'package:test1/Sign_up.dart';
+import 'historyHomepage.dart';
+import 'package:test1/mainPage.dart';
 import 'HomePage.dart';
 
 
 class myHistory extends StatefulWidget {
-  const myHistory({Key? key, required this.title}) : super(key: key);
 
+  myHistory({Key? key, required this.title, required this.userid}) : super(key: key);
+  final String userid;
   final String title;
 
   @override
@@ -23,6 +27,7 @@ class _MyHistory extends State<myHistory> {
   int bottomSelect = 0;
 
   final List<int> Mitems = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+  final List<int> Citems = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24];
   Object? M_select = 1;
   final List<int> Ditems = [
     1,
@@ -163,7 +168,7 @@ class _MyHistory extends State<myHistory> {
                     margin: EdgeInsets.all(20),
                     child: DropdownButton(
                       value: C_select,
-                      items: Mitems.map(
+                      items: Citems.map(
                               (value) {
                             return DropdownMenuItem(
                                 value: value,
@@ -216,8 +221,7 @@ class _MyHistory extends State<myHistory> {
               child: TextButton(
                 onPressed: (){
                   setState(() {
-                    // Navigator.push(context, MaterialPageRoute(builder: (_) => home(title: 'mytomato',)));
-                  });
+                    getHistory(widget.title, widget.userid, M_select.toString(), D_select.toString(), C_select.toString(), m_select.toString(), context);},);
                 },
                 child: Text("OK", style: TextStyle(fontSize: 20, color: Colors.grey), ),
               ),
