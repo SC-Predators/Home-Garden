@@ -103,16 +103,19 @@ def mainloop():
         now = dt.datetime.now().strftime("%Y-%m-%d %H-%M-%S")
         present_light = 100
         present_humidity = 200
+        present_ph = 2000
+        present_depth = 200
+        #산성도, 물높이 등도 다 가져오기
         if dt.datetime.now().minute%10 == 0:
             file_name = capture(0, now)
             update_with_imgurl(conn, cursor, file_name, now)
             desired_light, desired_humidity = get_desired_state(conn, cursor)
             if present_light < desired_light:
                 #do someThing
-                print("#do something")
+                print("#do something - light")
             if present_humidity < desired_humidity:
                 #do someThing
-                print("#do something")
+                print("#do something - humidity")
 
 if __name__ == '__main__':
     createFolder("./" + homegarden_barcode)
