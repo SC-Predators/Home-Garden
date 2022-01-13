@@ -44,7 +44,7 @@ class _myMode extends State<myMode> {
         centerTitle: true,
         title: Text(
           widget.title, style: TextStyle(fontSize: 20, color: Colors.grey),),
-        backgroundColor: Color(0xffF3E5F5),
+        backgroundColor: Color(0xffb2dfdb),
       ),
 
       body: Center(

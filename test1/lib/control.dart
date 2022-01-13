@@ -33,7 +33,7 @@ class _myControl extends State<myControl> {
       appBar: AppBar(
         centerTitle: true,
         title: Text(widget.title, style: TextStyle(fontSize: 20, color: Colors.grey),),
-        backgroundColor: Color(0xffF3E5F5),
+        backgroundColor: Color(0xffb2dfdb),
       ),
       body: Center(
         child: Column(
@@ -53,7 +53,7 @@ class _myControl extends State<myControl> {
                   Checkbox(value: _watercheck_on
                       , onChanged: (value){
                     setState(() {
-                      _watercheck_off = !value!;
+                      _watercheck_off = !(value!);
                       _watercheck_on= value!;
                     });
                       }),
@@ -65,7 +65,7 @@ class _myControl extends State<myControl> {
                   Checkbox(value: _watercheck_off
                       , onChanged: (value){
                         setState(() {
-                          _watercheck_on = !value!;
+                          _watercheck_on = !(value!);
                           _watercheck_off= value!;
                         });
                       }),
@@ -91,7 +91,7 @@ class _myControl extends State<myControl> {
                   Checkbox(value: _ledcheck_on
                       , onChanged: (value){
                         setState(() {
-                          _ledcheck_off = !value!;
+                          _ledcheck_off = !(value!);
                           _ledcheck_on= value!;
                         });
                       }),
@@ -104,7 +104,7 @@ class _myControl extends State<myControl> {
                   Checkbox(value: _ledcheck_off
                       , onChanged: (value){
                         setState(() {
-                          _ledcheck_on = !value!;
+                          _ledcheck_on = !(value!);
                           _ledcheck_off= value!;
                         });
                       }),
