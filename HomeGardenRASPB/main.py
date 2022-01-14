@@ -119,7 +119,7 @@ def mainloop():
         present_humidity = parsing['soil_humid'];
 
         present_ph = parsing["ph"];
-        present_depth = 200
+        present_depth = parsing["depth"];
         # 산성도, 물높이 등도 다 가져오기
         if dt.datetime.now().minute % 10 == 0:
             file_name = capture(0, now)
