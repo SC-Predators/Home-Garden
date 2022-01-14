@@ -56,7 +56,7 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-          widget.title, style: TextStyle(fontSize: 20, color: Colors.grey),),
+          widget.title, style: TextStyle(fontSize: 20, color: Colors.blueGrey),),
         backgroundColor: Color(0xffb2dfdb),
       ),
       body: Center(

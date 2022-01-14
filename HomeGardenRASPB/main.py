@@ -15,6 +15,7 @@ import random as rd
 import pymysql
 pymysql.install_as_MySQLdb()
 import serial
+import json
 
 
 
@@ -99,6 +100,7 @@ def get_desired_state(conn, cursor):
 def mainloop():
     conn, cursor = connect_RDS(ck.host, ck.port, ck.username, ck.password, ck.database)
     ser = serial.Serial('/dev/ttyACM0', 9600)
+    print(ser);
     while 1:
         now = dt.datetime.now().strftime("%Y-%m-%d %H-%M-%S")
         present_light = 100
