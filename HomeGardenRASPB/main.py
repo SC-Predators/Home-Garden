@@ -118,7 +118,7 @@ def mainloop():
         present_light = parsing["light"];
         present_humidity = parsing['soil_humid'];
 
-        present_ph = 2000
+        present_ph = parsing["ph"];
         present_depth = 200
         # 산성도, 물높이 등도 다 가져오기
         if dt.datetime.now().minute % 10 == 0:
