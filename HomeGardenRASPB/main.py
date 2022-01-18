@@ -1,4 +1,3 @@
-
 import logging
 import sys
 
@@ -14,15 +13,21 @@ import base64
 import requests
 import random as rd
 import pymysql
+
 pymysql.install_as_MySQLdb()
 import serial
 import json
+import time, json, ssl
+import paho.mqtt.client as mqtt
+
+ENDPOINT = ck.homegarden_endpint
+THING_NAME = 'Homegarden'
 
 
 # pip install boto3
 # Module not found err: pip install opencv-python
 
-# --------------------------------rds연결 설정
+# --------------------------------AWS
 def connect_RDS(host, port, username, password, database):
     try:
         conn = pymysql.connect(host=host, user=username, passwd=password, db=database, port=port, use_unicode=True,
@@ -33,6 +38,28 @@ def connect_RDS(host, port, username, password, database):
         logging.error("RDS에 연결되지 않았습니다.")
         sys.exit(1)
     return conn, cursor
+
+def iot_on_connect(mqttc, obj, flags, rc):
+    if rc == 0:  # 연결 성공
+        print('connected!!')
+        mqttc.subscribe('$aws/things/Homegarden/shadow/update/delta', qos=0)  # 구독
+
+def iot_on_message(mqttc, obj, msg):
+    if msg.topic == '$aws/things/Homegarden/shadow/update/delta':
+        payload = msg.payload.decode('utf-8')
+        j = json.loads(payload)
+        print(j['message'])
+
+def connect_iotCore():
+    mqtt_client = mqtt.Client(client_id=THING_NAME)
+    mqtt_client.on_connect = iot_on_connect
+    mqtt_client.on_message = iot_on_message
+    mqtt_client.tls_set('./connect_device_package/Homegarden.cert.pem', certfile='./connect_device_package/root-CA.pem',
+                        keyfile='./connect_device_package/HomeGarden.private.key', tls_version=ssl.PROTOCOL_TLSv1_2, ciphers=None)
+    mqtt_client.connect(ENDPOINT, port=8883)
+    mqtt_client.loop_start()  # threaded network loop
+
+
 
 
 # --------------------------------
@@ -104,7 +131,6 @@ def get_desired_state(conn, cursor):
     conn.close()
     return (result[0][0], result[0][1])
 
-
 def mainloop():
     conn, cursor = connect_RDS(ck.host, ck.port, ck.username, ck.password, ck.database)
     ser = serial.Serial('/dev/ttyACM0', 9600)
@@ -134,5 +160,7 @@ def mainloop():
 
 
 if __name__ == '__main__':
+    connect_iotCore()
+    iot_on_connect()
     createFolder("./" + homegarden_barcode)
     mainloop()
