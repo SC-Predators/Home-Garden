@@ -129,11 +129,11 @@ def mainloop():
 
     while 1:
         now = dt.datetime.now().strftime("%Y-%m-%d %H-%M-%S");
-        # 아두이노에서 센서 값 가져오기
-        present_light = parsing["light"]; # 조도
-        present_humidity = parsing['soil_humid']; # 토양 습도
-        present_ph = parsing["ph"]; # 토양 산성도
         present_depth = parsing["depth"]; # 물 깊이
+        present_ph = parsing["ph"]; # 토양 산성도
+        present_humidity = parsing['soil_humid']; # 토양 습도
+        present_light = parsing["light"]; # 조도
+        # 아두이노에서 센서 값 가져오기
 
 
         # 산성도, 물높이 등도 다 가져오기
