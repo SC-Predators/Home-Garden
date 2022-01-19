@@ -31,9 +31,9 @@ PATH_TO_CERTIFICATE = "aws_connect_config/2e4af4d2ef608636a26f102467b5e4b1e52208
 PATH_TO_PRIVATE_KEY = "aws_connect_config/2e4af4d2ef608636a26f102467b5e4b1e522087ca24bef950db9de311e8eec05-private.pem.key"
 PATH_TO_AMAZON_ROOT_CA_1 = "aws_connect_config/AmazonRootCA1.cer"
 MESSAGE = "Hello World"
-TOPIC = "$aws/things/Homegarden/shadow/update"
+TOPIC = "$aws/things/Homegarden/shadow/update/delta"
 RANGE = 20
-
+received_count = 0
 
 # pip install boto3
 # Module not found err: pip install opencv-python
@@ -49,6 +49,10 @@ def connect_RDS(host, port, username, password, database):
         sys.exit(1)
     return conn, cursor
 
+# Callback when the subscribed topic receives a message
+def on_message_received(topic, payload, dup, qos, retain, **kwargs):
+    print("Received message from topic '{}': {}".format(topic, payload))
+        
 #IoT Core에 연결! 
 # Spin up resources
 event_loop_group = io.EventLoopGroup(1)
@@ -71,6 +75,22 @@ connect_future = mqtt_connection.connect()
 # Future.result() waits until a result is available
 connect_future.result()
 print("Connected!")
+print("Subscribing to topic '{}'...".format(TOPIC))
+subscribe_future, packet_id = mqtt_connection.subscribe(
+    topic=TOPIC,
+    qos=mqtt.QoS.AT_LEAST_ONCE,
+    callback=on_message_received)
+
+subscribe_result = subscribe_future.result()
+print("Subscribed with {}".format(str(subscribe_result['qos'])))
+    
+# Callback when the subscribed topic receives a message
+def on_message_received(topic, payload, dup, qos, retain, **kwargs):
+    print("Received message from topic '{}': {}".format(topic, payload))
+    global received_count
+    received_count += 1
+    if received_count == args.count:
+        received_all_event.set()
 
 # --------------------------------
 
@@ -174,3 +194,4 @@ if __name__ == '__main__':
     #connect_iotCore()
     createFolder("./" + homegarden_barcode)
     #mainloop()
+ 
