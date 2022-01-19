@@ -62,7 +62,7 @@ class _myMode extends State<myMode> {
                         onChanged: (value) {
                           setState(() {
                             widget._manualCheck = !(value!);
-                            widget._autoCheck = value!;
+                            widget._autoCheck = (value)!;
                             if (widget._autoCheck == true) widget.presentMode = 'A';
                             else widget.presentMode = 'M';
                           });
@@ -89,8 +89,8 @@ class _myMode extends State<myMode> {
                           value: widget._manualCheck,
                           onChanged: (value) {
                             setState(() {
-                              widget._manualCheck = value!;
-                              widget._autoCheck = !value!;
+                              widget._manualCheck = (value)!;
+                              widget._autoCheck = !(value!);
                               if (widget._autoCheck == true) widget.presentMode = 'A';
                               else widget.presentMode = 'M';
                             });

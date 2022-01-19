@@ -54,7 +54,7 @@ class _myControl extends State<myControl> {
                       , onChanged: (value){
                     setState(() {
                       _watercheck_off = !(value!);
-                      _watercheck_on= value!;
+                      _watercheck_on= (value)!;
                     });
                       }),
                   Container(
@@ -66,7 +66,7 @@ class _myControl extends State<myControl> {
                       , onChanged: (value){
                         setState(() {
                           _watercheck_on = !(value!);
-                          _watercheck_off= value!;
+                          _watercheck_off= (value)!;
                         });
                       }),
                   Text("OFF"),
