@@ -110,7 +110,7 @@ class _SignUP extends State<SignUP> {
                         onChanged: (value) {
                           setState(() {
                             _manualChecked = !(value!);
-                            _autoChecked = value!;
+                            _autoChecked = (value)!;
                           });
                         }
                     ),
@@ -126,7 +126,7 @@ class _SignUP extends State<SignUP> {
                               onChanged: (value) {
                                 setState(() {
                                   _autoChecked = !(value!);
-                                  _manualChecked = value!;
+                                  _manualChecked = (value)!;
                                 });
                               }
                           ),
