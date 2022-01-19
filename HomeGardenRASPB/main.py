@@ -1,4 +1,3 @@
-
 import logging
 import sys
 
@@ -14,15 +13,21 @@ import base64
 import requests
 import random as rd
 import pymysql
+
 pymysql.install_as_MySQLdb()
 import serial
 import json
+import time, json, ssl
+import paho.mqtt.client as mqtt
+
+ENDPOINT = ck.homegarden_endpint
+THING_NAME = 'Homegarden'
 
 
 # pip install boto3
 # Module not found err: pip install opencv-python
 
-# --------------------------------rds연결 설정
+# --------------------------------AWS
 def connect_RDS(host, port, username, password, database):
     try:
         conn = pymysql.connect(host=host, user=username, passwd=password, db=database, port=port, use_unicode=True,
@@ -33,6 +38,17 @@ def connect_RDS(host, port, username, password, database):
         logging.error("RDS에 연결되지 않았습니다.")
         sys.exit(1)
     return conn, cursor
+
+
+def connect_iotCore():
+    client = boto3.client('iot-data',
+                          region_name=ck.region,
+                          aws_access_key_id=ck.ACCESS_KEY_ID,
+                          aws_secret_access_key=ck.ACCESS_SECRET_KEY,
+                          endpoint_url=ck.homegarden_endpint)
+    client
+
+
 
 
 # --------------------------------
@@ -104,7 +120,6 @@ def get_desired_state(conn, cursor):
     conn.close()
     return (result[0][0], result[0][1])
 
-
 def mainloop():
     conn, cursor = connect_RDS(ck.host, ck.port, ck.username, ck.password, ck.database)
     ser = serial.Serial('/dev/ttyACM0', 9600)
@@ -135,5 +150,6 @@ def mainloop():
 
 
 if __name__ == '__main__':
+    connect_iotCore()
     createFolder("./" + homegarden_barcode)
-    mainloop()
+    #mainloop()

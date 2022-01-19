@@ -1,4 +1,7 @@
 import json
+import boto3
+import configKey as ck
+
 
 #################################개발단지
 context = 0
@@ -14,10 +17,19 @@ print("############################")
 """
 
 ################################
+import json
+import boto3
 
 def lambda_handler(event, context):
-    event_body = event['body']
-    parsedBody = event_body.split(":")
+    #event_body = json.load(event)
+    #event = json.load(event)
+    event = json.dumps(event['body'])
+    event = event.replace(" ", "")
+    event = event.replace("\\n", "")
+    event = event.replace("\\", "")
+
+    print(event)
+    parsedBody = event.split(":")
 
     print(parsedBody)
     userSelected_clitentId = parsedBody[1].split("\"")
@@ -27,13 +39,24 @@ def lambda_handler(event, context):
     print("light: " + userSelected_light[0])
 
     userSelected_water = parsedBody[3][:-1].replace("\n", "")
+    userSelected_water = userSelected_water.replace("}", "")
     print("water: " + str(userSelected_water))
 
     payload = """{"state":{"reported":{"manual_light":""" + str(userSelected_light[0]) + """, "manual_water": """ + str(userSelected_water) + """}}}"""
     print(payload)
-    original = """{"state":{"reported":{"manual_light":"on", "manual_water":"off"}}}"""
 
-    _return_body_result = json.dumps(event_body)
+    ########## 토픽 발행
+    """
+    client = boto3.client('iot-data', region_name='ap-northeast-2')
+    response = client.publish(
+        topic='$aws/things/Homegarden/shadow/update',
+        qos=1,
+        payload=json.dumps(payload)
+    )
+    response
+    """
+    ########## 토픽 발행
+    _return_body_result = json.dumps("Sent: OK")
     return {
         'statusCode': 200,
         'body': _return_body_result,
