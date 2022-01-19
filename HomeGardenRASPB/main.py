@@ -189,20 +189,21 @@ def get_desired_state():
 
 def mainloop():
     conn, cursor = connect_RDS(ck.host, ck.port, ck.username, ck.password, ck.database)
-    # 시리얼 포트 내용 가져와 JSON파싱
-    data = ser.readline();
-    data = data.decode()[:len(data)-1]
-    print("data: " + data)
-    parsing = json.loads(data);
 
     while 1:
+        # 시리얼 포트 내용 가져와 JSON파싱
+        data = ser.readline();
+        data = data.decode()[:len(data)-1]           
+        print("data: " + data)
+        if data[0] == "=":
+            continue
+        parsing = json.loads(data);
         now = dt.datetime.now().strftime("%Y-%m-%d %H-%M-%S");
         present_depth = parsing["depth"]; # 물 깊이
         present_ph = parsing["ph"]; # 토양 산성도
         present_humidity = parsing['soil_humid']; # 토양 습도
         present_light = parsing["light"]; # 조도
         # 아두이노에서 센서 값 가져오기
-
         if dt.datetime.now().second % 10 == 0:
             #desired_State 가져오기
             desired_humidity, desired_light = get_desired_state()
@@ -218,7 +219,7 @@ def mainloop():
                 ser.write(b's')
             time.sleep(1.5)
         # 산성도, 물높이 등도 다 가져오기
-        if dt.datetime.now().minute % 10 == 0:
+        if dt.datetime.now().minute % 10 == 0 & dt.datetime.now().second % 60 == 0:
             file_name = capture(0, now)
             update_with_imgurl(file_name, now)
             desired_humidity, desired_light = get_desired_state()
