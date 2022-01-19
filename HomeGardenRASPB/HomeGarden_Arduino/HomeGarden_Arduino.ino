@@ -18,6 +18,11 @@ int analogBufferTemp[SCOUNT];
 int analogBufferIndex = 0,copyIndex = 0;
 float averageVoltage = 0,tdsValue = 0,temperature = 25;
 
+int Relay = A5;
+
+
+
+
 DynamicJsonDocument result_json(1024);
 
 void setup() {
@@ -25,6 +30,8 @@ void setup() {
   pinMode(TdsSensorPin,INPUT);
   pinMode(TRIG, OUTPUT);
   pinMode(ECHO, INPUT);
+  pinMode(Relay, OUTPUT);
+  
   
 }
 
@@ -76,42 +83,30 @@ void loop() {
 
 
   
-  float Soil_moisture = analogRead(A1);// 토양 습도
-  int light = analogRead(A0); // 조도 값
+  float Soil_moisture = analogRead(A0);// 토양 습도
+  int soil = map(Soil_moisture,0,1023,0,7);
+  int light = analogRead(A1); // 조도 값
   float ph = analogRead(A2); // 토양 산성도
   float humidity_rate = 100-((Soil_moisture-_MIN)/(_MAX-_MIN))*100;
-  
-  result_json["soil_humid"] = humidity_rate;
+
+  //센서 값 JSON 형식으로 출력
+  result_json["soil_humid"] = soil; 
   result_json["light"] = light;
   result_json["ph"] = ph;
   result_json["depth"] = distance;
+
   
   
   serializeJson(result_json, Serial);      
   Serial.println("\n=================");
   delay(1000);
 
-    static unsigned long analogSampleTimepoint = millis();
-  if(millis()-analogSampleTimepoint > 40U) //every 40 milliseconds,read the analog value from the ADC
-  {
-    analogSampleTimepoint = millis();
-    analogBuffer[analogBufferIndex] = analogRead(TdsSensorPin); //read the analog value and store into the buffer
-    analogBufferIndex++;
-    if(analogBufferIndex == SCOUNT)
-    analogBufferIndex = 0;
+  if (soil > 4){
+    // 물펌프 동작
+    Serial.print("waterPump");
+    digitalWrite(Relay, HIGH);
+    delay(1000);
+    digitalWrite(Relay, LOW);
   }
-  static unsigned long printTimepoint = millis();
-  if(millis()-printTimepoint > 800U)
-  {
-    printTimepoint = millis();
-    float compensationCoefficient=1.0+0.02*(temperature-25.0); //temperature compensation formula: fFinalResult(25^C) = fFinalResult(current)/(1.0+0.02*(fTP-25.0));
-    float compensationVolatge=averageVoltage/compensationCoefficient; //temperature compensation
-    tdsValue=(133.42*compensationVolatge*compensationVolatge*compensationVolatge - 255.86*compensationVolatge*compensationVolatge + 857.39*compensationVolatge)*0.5; //convert voltage value to tds value
-    Serial.print("voltage:");
-    Serial.print(averageVoltage,2);
-    Serial.print("V ");
-    Serial.print("TDS Value:");
-    Serial.print(tdsValue,0);
-    Serial.println("ppm");
-}
+ 
 }
