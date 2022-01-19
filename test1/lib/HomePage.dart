@@ -5,18 +5,12 @@ import 'package:test1/API.dart';
 import 'History.dart';
 import 'main.dart';
 
-class innerData {
-  String humidity;
-  String illum;
-  String ph;
-  String depth;
-
-  innerData(this.humidity, this.illum, this.ph, this.depth);
-}
 
 class home extends StatefulWidget {
 
-  const home({Key? key, required this.title,
+  const home({Key? key,
+    required this.id,
+    required this.title,
     required this.img,
     required this.humidity,
     required this.illuminace,
@@ -25,6 +19,7 @@ class home extends StatefulWidget {
 
 
   // final innerData inner;
+  final String id;
   final String title;
   final String img;
   final int humidity;
@@ -54,6 +49,16 @@ class _home extends State<home> {
         centerTitle: true,
         title: Text(widget.title, style: TextStyle(fontSize: 20, color: Colors.grey),),
         backgroundColor: Color(0xffb2dfdb),
+        actions: <Widget>[
+          new IconButton(
+              onPressed:() {
+                setState(() {
+                  getData(widget.id, context, widget.title);
+                }
+                );
+              }
+            , icon: new Icon(Icons.refresh))
+        ],
       ),
 
 

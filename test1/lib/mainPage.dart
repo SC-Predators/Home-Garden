@@ -69,7 +69,7 @@ class _mainPage extends State<mainPage>{
   Widget build (BuildContext context) {
 
     final List<Widget> _children = [
-      home(title: widget.userid.nickname, humidity: widget.humid, illuminace: widget.illum, waterDepth: widget.depth, ph: widget.ph,img: widget.img,),
+      home(id: widget.userid.userId, title: widget.userid.nickname, humidity: widget.humid, illuminace: widget.illum, waterDepth: widget.depth, ph: widget.ph,img: widget.img,),
       myHistory(title: widget.userid.nickname, userid: widget.userid.userId,), // 오늘 날짜 전달?
       myMode(title: widget.userid.nickname, presentMode: widget.userid.userMode,), // 현재 모드 전달
       myControl(title: widget.userid.nickname)]; // 현재 장치 모드 전달
