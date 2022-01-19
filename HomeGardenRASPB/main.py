@@ -39,25 +39,14 @@ def connect_RDS(host, port, username, password, database):
         sys.exit(1)
     return conn, cursor
 
-def iot_on_connect(mqttc, obj, flags, rc):
-    if rc == 0:  # 연결 성공
-        print('connected!!')
-        mqttc.subscribe('$aws/things/Homegarden/shadow/update/delta', qos=0)  # 구독
-
-def iot_on_message(mqttc, obj, msg):
-    if msg.topic == '$aws/things/Homegarden/shadow/update/delta':
-        payload = msg.payload.decode('utf-8')
-        j = json.loads(payload)
-        print(j['message'])
 
 def connect_iotCore():
-    mqtt_client = mqtt.Client(client_id=THING_NAME)
-    mqtt_client.on_connect = iot_on_connect
-    mqtt_client.on_message = iot_on_message
-    mqtt_client.tls_set('./connect_device_package/Homegarden.cert.pem', certfile='./connect_device_package/root-CA.pem',
-                        keyfile='./connect_device_package/HomeGarden.private.key', tls_version=ssl.PROTOCOL_TLSv1_2, ciphers=None)
-    mqtt_client.connect(ENDPOINT, port=8883)
-    mqtt_client.loop_start()  # threaded network loop
+    client = boto3.client('iot-data',
+                          region_name=ck.region,
+                          aws_access_key_id=ck.ACCESS_KEY_ID,
+                          aws_secret_access_key=ck.ACCESS_SECRET_KEY,
+                          endpoint_url=ck.homegarden_endpint)
+    client
 
 
 
@@ -161,6 +150,5 @@ def mainloop():
 
 if __name__ == '__main__':
     connect_iotCore()
-    iot_on_connect()
     createFolder("./" + homegarden_barcode)
-    mainloop()
+    #mainloop()

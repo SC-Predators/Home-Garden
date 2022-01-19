@@ -1,0 +1,40 @@
+{
+    "version": "2.0",
+    "routeKey": "POST /app/users/plant/active",
+    "rawPath": "/app/users/plant/active",
+    "rawQueryString": "",
+    "headers": {
+        "accept": "*/*",
+        "accept-encoding": "gzip, deflate, br",
+        "cache-control": "no-cache",
+        "content-length": "68",
+        "content-type": "application/json",
+        "host": "sxo1vvu9ai.execute-api.ap-northeast-2.amazonaws.com",
+        "postman-token": "04739780-480c-4565-ab0e-8ad6f44bdda5",
+        "user-agent": "PostmanRuntime/7.29.0",
+        "x-amzn-trace-id": "Root=1-61e0d72e-2353980f7f6f875a3773e168",
+        "x-forwarded-for": "220.117.38.51",
+        "x-forwarded-port": "443",
+        "x-forwarded-proto": "https"
+    },
+    "requestContext": {
+        "accountId": "934948423361",
+        "apiId": "sxo1vvu9ai",
+        "domainName": "sxo1vvu9ai.execute-api.ap-northeast-2.amazonaws.com",
+        "domainPrefix": "sxo1vvu9ai",
+        "http": {
+            "method": "POST",
+            "path": "/app/users/plant/active",
+            "protocol": "HTTP/1.1",
+            "sourceIp": "220.117.38.51",
+            "userAgent": "PostmanRuntime/7.29.0"
+        },
+        "requestId": "L6aPPgiGIE0EM3A=",
+        "routeKey": "POST /app/users/plant/active",
+        "stage": "$default",
+        "time": "14/Jan/2022:01:51:42 +0000",
+        "timeEpoch": 1642125102171
+    },
+    "body": "{\n    \"clientID\": \"jjh63360\",\n    \"light\":\"off\",\n    \"water\": \"off\"\n}",
+    "isBase64Encoded": false
+}
