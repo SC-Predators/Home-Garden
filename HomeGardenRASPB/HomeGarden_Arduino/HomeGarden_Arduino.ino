@@ -13,6 +13,7 @@
 float _MAX = 1000;
 float _MIN = 280;
 String relay_state;
+char ch;
   
 
 DynamicJsonDocument result_json(1024);
@@ -50,21 +51,24 @@ void loop() {
   float humidity_rate = 100-((Soil_moisture-_MIN)/(_MAX-_MIN))*100;
 
   //센서 값 JSON 형식으로 출력
-  result_json["soil_humid"] = soil; 
+  result_json["soil_humid"] = humidity_rate; 
   result_json["light"] = light;
   result_json["ph"] = ph;
   result_json["depth"] = distance;
 
-  
+  if(Serial.available()){
+    ch = Serial.read();
+    Serial.print("ch: " + ch);
+  }
 
 
-  if (soil > 4){
+  if (ch=='w'){
     // 물펌프 동작
-    Serial.print("waterPumpOn");
+    //Serial.print("waterPumpOn");
     digitalWrite(Relay, HIGH);
   }
-  else {
-    Serial.print("waterPumpOff");
+  else if(ch=='s') {
+    //Serial.print("waterPumpOff");
     digitalWrite(Relay, LOW);
   }
   

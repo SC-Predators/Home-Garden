@@ -25,7 +25,7 @@ from awsiot import mqtt_connection_builder
 import time as t
 import json
 
-ENDPOINT = ck.host
+ENDPOINT = ck.iot_host
 CLIENT_ID = "testDevice"
 PATH_TO_CERTIFICATE = "aws_connect_config/2e4af4d2ef608636a26f102467b5e4b1e522087ca24bef950db9de311e8eec05-certificate.pem.crt"
 PATH_TO_PRIVATE_KEY = "aws_connect_config/2e4af4d2ef608636a26f102467b5e4b1e522087ca24bef950db9de311e8eec05-private.pem.key"
@@ -34,6 +34,8 @@ MESSAGE = "Hello World"
 TOPIC = "$aws/things/Homegarden/shadow/update/delta"
 RANGE = 20
 received_count = 0
+
+ser = serial.Serial('/dev/ttyACM0', 9600)
 
 # pip install boto3
 # Module not found err: pip install opencv-python
@@ -52,6 +54,12 @@ def connect_RDS(host, port, username, password, database):
 # Callback when the subscribed topic receives a message
 def on_message_received(topic, payload, dup, qos, retain, **kwargs):
     print("Received message from topic '{}': {}".format(topic, payload))
+    jsonObject = json.loads(payload)
+    state = jsonObject.get("state")
+    desired = state.get("desired")
+    manual_water = desired.get("manual_water")
+    if(manual_water == "on"):
+        ser.write('w')
         
 #IoT Core에 연결! 
 # Spin up resources
@@ -135,7 +143,8 @@ def capture(camid, now):
     return file_name
 
 
-def update_with_imgurl(conn, cursor, file_name, now):
+def update_with_imgurl(file_name, now):
+    conn, cursor = connect_RDS(ck.host, ck.port, ck.username, ck.password, ck.database)
     updateQuery = """INSERT INTO Present_state (homegardenID, temperature, humidity, light, water_level, phStatus, img)
                      VALUES ("{0}", {1}, {2}, {3}, {4}, {5}, "{6}")""".format(
         homegarden_barcode,
@@ -152,18 +161,10 @@ def update_with_imgurl(conn, cursor, file_name, now):
     conn.commit()
     os.remove(file_name)
 
-
-def get_desired_state(conn, cursor):
-    get_desired_state_query = f"SELECT desired_humidity, desired_light FROM Desired_state where homegardenID = \"{homegarden_barcode}\" "
-    print(get_desired_state_query)
-    cursor.execute(get_desired_state_query)
-    result = cursor.fetchall()
-    conn.close()
-    return (result[0][0], result[0][1])
-
-def update_without_img(conn, cursor, present_humidity, present_light, present_depth, present_ph):
+def update_without_img(present_humidity, present_light, present_depth, present_ph):
+    conn, cursor = connect_RDS(ck.host, ck.port, ck.username, ck.password, ck.database)
     updateQuery = """INSERT INTO Present_state (homegardenID, humidity, light, water_level, phStatus)
-                     VALUES ("{0}", {1}, {2}, {3}, {4}, {5})""".format(
+                     VALUES ("{0}", {1}, {2}, {3}, {4})""".format(
         homegarden_barcode,
         present_humidity,
         present_light,
@@ -175,11 +176,23 @@ def update_without_img(conn, cursor, present_humidity, present_light, present_de
     cursor.execute(updateQuery)
     conn.commit()
 
+def get_desired_state():
+    conn, cursor = connect_RDS(ck.host, ck.port, ck.username, ck.password, ck.database)
+    get_desired_state_query = f"SELECT desired_humidity, desired_light FROM Desired_state where homegardenID = \"{homegarden_barcode}\" "
+    print(get_desired_state_query)
+    cursor.execute(get_desired_state_query)
+    result = cursor.fetchall()
+    conn.close()
+    return (result[0][0], result[0][1])
+
+
+
 def mainloop():
     conn, cursor = connect_RDS(ck.host, ck.port, ck.username, ck.password, ck.database)
-    ser = serial.Serial('/dev/ttyACM0', 9600)
-    # 시리얼 포트 내용 가져와 JSON 파싱
+    # 시리얼 포트 내용 가져와 JSON파싱
     data = ser.readline();
+    data = data.decode()[:len(data)-1]
+    print("data: " + data)
     parsing = json.loads(data);
 
     while 1:
@@ -190,31 +203,35 @@ def mainloop():
         present_light = parsing["light"]; # 조도
         # 아두이노에서 센서 값 가져오기
 
-        if dt.datetime.now().second $ 20 == 0:
+        if dt.datetime.now().second % 10 == 0:
             #desired_State 가져오기
-            desired_light, desired_humidity = get_desired_state(conn, cursor)
-            update_without_img(conn,cursor, present_humidity, present_light, present_depth, present_ph)
+            desired_humidity, desired_light = get_desired_state()
+            update_without_img(present_humidity, present_light, present_depth, present_ph)
             if present_light < desired_light:
                 # do someThing
                 print("#do something - light")
             if present_humidity < desired_humidity:
                 # do someThing
-                print("#do something - humidity")
+                print("Desired Humid: " + str(desired_humidity) + "but " + str(present_humidity) + " given.")
+                ser.write(b'w')
+            else:
+                ser.write(b's')
+            time.sleep(1.5)
         # 산성도, 물높이 등도 다 가져오기
         if dt.datetime.now().minute % 10 == 0:
             file_name = capture(0, now)
-            update_with_imgurl(conn, cursor, file_name, now)
-            desired_light, desired_humidity = get_desired_state(conn, cursor)
+            update_with_imgurl(file_name, now)
+            desired_humidity, desired_light = get_desired_state()
             if present_light < desired_light:
                 # do someThing
                 print("#do something - light")
             if present_humidity < desired_humidity:
                 # do someThing
-                print("#do something - humidity")
+                print("Desired Humid: " + desired_humidiry + "but " + present_humidity + " given.")
 
 
 if __name__ == '__main__':
     #connect_iotCore()
     createFolder("./" + homegarden_barcode)
-    #mainloop()
+    mainloop()
  
