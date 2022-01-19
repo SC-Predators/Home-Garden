@@ -256,15 +256,20 @@ public class userDAO {
         String updateModeQuery =  "UPDATE Homegarden_Client SET mode = ? WHERE clientID = ?";
         Object[] updateModeParams = new Object[]{patchModeReq.getMode(), patchModeReq.getClientID()};
 
-        String updateDesiredStateQuery = "UPDATE Desired_state DS SET desired_light = 1000, desired_humidity = 60 WHERE  DS.clientID = ?;";
-        String clientID = patchModeReq.getClientID();
-
+        String updateDesiredStateQuery = "UPDATE Desired_state DS SET desired_light = ?, desired_humidity = ? WHERE  DS.clientID = ?;";
+        Object[] updateDesiredStateParams = new Object[]{patchModeReq.getIlluminance(), patchModeReq.getHumidity(), patchModeReq.getClientID()};
+        System.out.println("=====================");
+        System.out.println("모드 업데이트");
+        System.out.println("clientID: " + patchModeReq + " desired_Humidity: " + patchModeReq.getHumidity() + " desired_light: " + patchModeReq.getIlluminance());
+        System.out.println("=====================");
         this.jdbcTemplate.update(updateModeQuery, updateModeParams);
-        return this.jdbcTemplate.update(updateDesiredStateQuery, clientID);
+        return this.jdbcTemplate.update(updateDesiredStateQuery, updateDesiredStateParams);
     }
 
     //유저 모드 가져오기
     public PostUserModeRes postPlantMode(GetUserReq getUserReq){
+        //String.format("SELECT COUNT(*) FROM Present_state PS, Homegarden_Client HC " +
+        //                                          "WHERE PS.homegardenID=HC.homegardenID AND HC.clientID = \"%s\" AND writeTime < \'%s\';", clientID, historyTime);
         String getModeQuery = "SELECT * FROM Desired_state DS, Homegarden_Client HC WHERE  HC.clientID = DS.clientID  AND DS.clientID = ?;";
         String clientID = getUserReq.getClientID();
 
