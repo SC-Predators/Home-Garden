@@ -20,8 +20,19 @@ import json
 import time, json, ssl
 import paho.mqtt.client as mqtt
 
-ENDPOINT = ck.homegarden_endpint
-THING_NAME = 'Homegarden'
+from awscrt import io, mqtt, auth, http
+from awsiot import mqtt_connection_builder
+import time as t
+import json
+
+ENDPOINT = ck.host
+CLIENT_ID = "testDevice"
+PATH_TO_CERTIFICATE = "aws_connect_config/2e4af4d2ef608636a26f102467b5e4b1e522087ca24bef950db9de311e8eec05-certificate.pem.crt"
+PATH_TO_PRIVATE_KEY = "aws_connect_config/2e4af4d2ef608636a26f102467b5e4b1e522087ca24bef950db9de311e8eec05-private.pem.key"
+PATH_TO_AMAZON_ROOT_CA_1 = "aws_connect_config/AmazonRootCA1.cer"
+MESSAGE = "Hello World"
+TOPIC = "$aws/things/Homegarden/shadow/update"
+RANGE = 20
 
 
 # pip install boto3
@@ -33,23 +44,33 @@ def connect_RDS(host, port, username, password, database):
         conn = pymysql.connect(host=host, user=username, passwd=password, db=database, port=port, use_unicode=True,
                                charset='utf8')
         cursor = conn.cursor()
-
     except:
         logging.error("RDS에 연결되지 않았습니다.")
         sys.exit(1)
     return conn, cursor
 
-
-def connect_iotCore():
-    client = boto3.client('iot-data',
-                          region_name=ck.region,
-                          aws_access_key_id=ck.ACCESS_KEY_ID,
-                          aws_secret_access_key=ck.ACCESS_SECRET_KEY,
-                          endpoint_url=ck.homegarden_endpint)
-    client
-
-
-
+#IoT Core에 연결! 
+# Spin up resources
+event_loop_group = io.EventLoopGroup(1)
+host_resolver = io.DefaultHostResolver(event_loop_group)
+client_bootstrap = io.ClientBootstrap(event_loop_group, host_resolver)
+mqtt_connection = mqtt_connection_builder.mtls_from_path(
+            endpoint=ENDPOINT,
+            cert_filepath=PATH_TO_CERTIFICATE,
+            pri_key_filepath=PATH_TO_PRIVATE_KEY,
+            client_bootstrap=client_bootstrap,
+            ca_filepath=PATH_TO_AMAZON_ROOT_CA_1,
+            client_id=CLIENT_ID,
+            clean_session=False,
+            keep_alive_secs=6
+            )
+print("Connecting to {} with client ID '{}'...".format(
+        ENDPOINT, CLIENT_ID))
+# Make the connect() call
+connect_future = mqtt_connection.connect()
+# Future.result() waits until a result is available
+connect_future.result()
+print("Connected!")
 
 # --------------------------------
 
@@ -149,6 +170,6 @@ def mainloop():
 
 
 if __name__ == '__main__':
-    connect_iotCore()
+    #connect_iotCore()
     createFolder("./" + homegarden_barcode)
     #mainloop()
