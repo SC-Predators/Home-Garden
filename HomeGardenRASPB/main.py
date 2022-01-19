@@ -161,6 +161,20 @@ def get_desired_state(conn, cursor):
     conn.close()
     return (result[0][0], result[0][1])
 
+def update_without_img(conn, cursor, present_humidity, present_light, present_depth, present_ph):
+    updateQuery = """INSERT INTO Present_state (homegardenID, humidity, light, water_level, phStatus)
+                     VALUES ("{0}", {1}, {2}, {3}, {4}, {5})""".format(
+        homegarden_barcode,
+        present_humidity,
+        present_light,
+        present_depth,
+        present_ph
+    )
+    print("Query Updated: " + updateQuery)
+
+    cursor.execute(updateQuery)
+    conn.commit()
+
 def mainloop():
     conn, cursor = connect_RDS(ck.host, ck.port, ck.username, ck.password, ck.database)
     ser = serial.Serial('/dev/ttyACM0', 9600)
@@ -176,7 +190,16 @@ def mainloop():
         present_light = parsing["light"]; # 조도
         # 아두이노에서 센서 값 가져오기
 
-
+        if dt.datetime.now().second $ 20 == 0:
+            #desired_State 가져오기
+            desired_light, desired_humidity = get_desired_state(conn, cursor)
+            update_without_img(conn,cursor, present_humidity, present_light, present_depth, present_ph)
+            if present_light < desired_light:
+                # do someThing
+                print("#do something - light")
+            if present_humidity < desired_humidity:
+                # do someThing
+                print("#do something - humidity")
         # 산성도, 물높이 등도 다 가져오기
         if dt.datetime.now().minute % 10 == 0:
             file_name = capture(0, now)
