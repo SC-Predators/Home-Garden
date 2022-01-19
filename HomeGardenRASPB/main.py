@@ -144,18 +144,19 @@ def get_desired_state(conn, cursor):
 def mainloop():
     conn, cursor = connect_RDS(ck.host, ck.port, ck.username, ck.password, ck.database)
     ser = serial.Serial('/dev/ttyACM0', 9600)
+    # 시리얼 포트 내용 가져와 JSON 파싱
     data = ser.readline();
-
     parsing = json.loads(data);
-    print(parsing);
 
     while 1:
         now = dt.datetime.now().strftime("%Y-%m-%d %H-%M-%S");
-        present_light = parsing["light"];
-        present_humidity = parsing['soil_humid'];
+        present_depth = parsing["depth"]; # 물 깊이
+        present_ph = parsing["ph"]; # 토양 산성도
+        present_humidity = parsing['soil_humid']; # 토양 습도
+        present_light = parsing["light"]; # 조도
+        # 아두이노에서 센서 값 가져오기
 
-        present_ph = parsing["ph"];
-        present_depth = 200
+
         # 산성도, 물높이 등도 다 가져오기
         if dt.datetime.now().minute % 10 == 0:
             file_name = capture(0, now)
