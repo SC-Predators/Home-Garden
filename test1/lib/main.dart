@@ -57,7 +57,8 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-          widget.title, style: TextStyle(fontSize: 20, color: Colors.blueGrey),),
+          widget.title,
+          style: TextStyle(fontSize: 20, color: Colors.blueGrey),),
         backgroundColor: Color(0xffb2dfdb),
       ),
       body: Center(
@@ -89,18 +90,21 @@ class _MyHomePageState extends State<MyHomePage> {
 
 
             Container(
-              padding: EdgeInsets.symmetric(vertical: 5, horizontal: 100),
-              margin: EdgeInsets.symmetric(vertical: 10),
-              color: Color(0xffE6EE9C),
-              child: TextButton(
-                onPressed: (){
-                  userID send;
-                  checkID(cont.text, cont2.text, context);
-                },
-                  child: Text("LOGIN", style: TextStyle(fontSize: 25, color: Colors.grey),),
-              ),
-            ),
+                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 100),
+                margin: EdgeInsets.symmetric(vertical: 10),
+                color: Color(0xffE6EE9C),
+                child: TextButton(
+                  onPressed: () {
+                    userID send;
+                    checkID(cont.text, cont2.text, context);
+                    cont2.text = '';
+                  },
+                  child: Text(
+                    "LOGIN",
+                    style: TextStyle(fontSize: 25, color: Colors.grey),),
 
+                )
+            ),
             Container(
               padding: EdgeInsets.symmetric(vertical: 5, horizontal: 90),
               margin: EdgeInsets.symmetric(vertical: 10),
@@ -109,13 +113,14 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: TextButton(
                   onPressed: () {
                     Navigator.push(
-                        context, MaterialPageRoute(builder: (_) => SignUP(title: 'smart home garden',)));
+                        context, MaterialPageRoute(
+                        builder: (_) => SignUP(title: 'SMART HOME GARDEN',)));
                   },
                   child: Text("SIGN UP",
                     style: TextStyle(fontSize: 25, color: Colors.grey),),
                 ),
-                ),
               ),
+            ),
           ],
         ),
       ), // This trailing comma makes auto-formatting nicer for build methods.
