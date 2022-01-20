@@ -85,6 +85,19 @@ public class userDAO {
         return this.jdbcTemplate.queryForObject(lastInserIdQuery, int.class); // 해당 쿼리문의 결과 마지막으로 삽인된 유저의 userIdx번호를 반환한다.
     }
 
+    //사용자 삭제
+    public int deleteUser(GetUserReq getUserReq){
+        String deleteUserQuery1 = "Delete from Desired_state where clientID = ?";
+        String deleteUserQuery2 = "Delete from Homegarden_Client where clientID = ?";
+        String clientID = getUserReq.getClientID();
+        System.out.println("=====================");
+        System.out.println("사용자 정보삭제");
+        System.out.println("ClientID: " + clientID);
+        System.out.println("=====================");
+        this.jdbcTemplate.update(deleteUserQuery1, clientID);
+        return this.jdbcTemplate.update(deleteUserQuery2, clientID);
+    }
+
     //식물 닉네임 확인
     public GetUserPlantNickNameRes getClienPlantNickName(GetUserReq getUserReq){
         String getUserQuery = "SELECT plantNickName FROM Homegarden_Client WHERE clientID = ?";
@@ -277,6 +290,9 @@ public class userDAO {
         //                                          "WHERE PS.homegardenID=HC.homegardenID AND HC.clientID = \"%s\" AND writeTime < \'%s\';", clientID, historyTime);
         String getModeQuery = "SELECT * FROM Desired_state DS, Homegarden_Client HC WHERE  HC.clientID = DS.clientID  AND DS.clientID = ?;";
         String clientID = getUserReq.getClientID();
+        System.out.println("=====================");
+        System.out.println("사용자 모드 가져오기");
+        System.out.println("clientID: " + getUserReq.getClientID());
         System.out.println("=====================");
         return this.jdbcTemplate.queryForObject(getModeQuery,
                 (rs, rowNum) -> new PostUserModeRes(

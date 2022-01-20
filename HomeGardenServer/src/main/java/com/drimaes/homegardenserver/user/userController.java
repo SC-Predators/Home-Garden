@@ -71,6 +71,21 @@ public class userController {
         }
     }
     /**
+     * 회원 삭제 API
+     * [Delete] app/users/sign-up
+     */
+    @ResponseBody
+    @DeleteMapping("sign-up")
+    public BaseResponse<String> deleteUser(@RequestBody GetUserReq getUserReq){
+        try {
+            String result = userService.deleteUser(getUserReq);
+            return new BaseResponse<>(result);
+        }catch (BaseException exception){
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+    /**
      * 가입자의 중복 ID입력 확인!
      * [Post] app/users/sign-up
      * **/

@@ -64,6 +64,16 @@ public class userService {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+    //회원 삭제
+    public String deleteUser(GetUserReq getUserReq) throws BaseException {
+        try {
+            int result = userDao.deleteUser(getUserReq);
+            if (result == 1) return "result: 회원 삭제 성공";
+            else return "result: 회원 삭제 실패";
+        } catch (Exception exception) { // DB에 이상이 있는 경우 에러 메시지를 보냅니다.
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 
     // 모드 수정(Patch)
     public String patchPlantMode(PatchModeReq patchModeReq) throws BaseException{
