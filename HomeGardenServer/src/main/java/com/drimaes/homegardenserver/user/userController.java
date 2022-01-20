@@ -53,7 +53,7 @@ public class userController {
     // Body
     @ResponseBody
     @PostMapping("/sign-up")    // POST 방식의 요청을 매핑하기 위한 어노테이션
-    public BaseResponse<PostUserRes> createUser(@RequestBody PostUserReq postUserReq) {
+    public BaseResponse<String> createUser(@RequestBody PostUserReq postUserReq) {
         //  @RequestBody란, 클라이언트가 전송하는 HTTP Request Body(우리는 JSON으로 통신하니, 이 경우 body는 JSON)를 자바 객체로 매핑시켜주는 어노테이션
         // email에 값이 존재하는지, 빈 값으로 요청하지는 않았는지 검사합니다. 빈값으로 요청했다면 에러 메시지를 보냅니다.
         if (postUserReq.getClientID() == null) {
@@ -64,7 +64,7 @@ public class userController {
         }
 
         try {
-            PostUserRes postUserRes = userService.createUser(postUserReq);
+            String postUserRes = userService.createUser(postUserReq);
             return new BaseResponse<>(postUserRes);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));

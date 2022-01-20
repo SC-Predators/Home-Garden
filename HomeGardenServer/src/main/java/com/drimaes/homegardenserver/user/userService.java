@@ -33,7 +33,7 @@ public class userService {
     }
     // ******************************************************************************
     // 회원가입(POST)
-    public PostUserRes createUser(PostUserReq postUserReq) throws BaseException {
+    public String createUser(PostUserReq postUserReq) throws BaseException {
         // 중복 확인: 해당 이메일을 가진 유저가 있는지 확인합니다. 중복될 경우, 에러 메시지를 보냅니다.
         String pwd;
         try {
@@ -45,8 +45,8 @@ public class userService {
             throw new BaseException(PASSWORD_ENCRYPTION_ERROR);
         }
         try {
-            int userIdx = userDao.createUser(postUserReq);
-            return new PostUserRes(userIdx);
+            String userRes = userDao.createUser(postUserReq);
+            return userRes;
 
         } catch (Exception exception) { // DB에 이상이 있는 경우 에러 메시지를 보냅니다.
             throw new BaseException(DATABASE_ERROR);
@@ -68,8 +68,8 @@ public class userService {
     public String deleteUser(GetUserReq getUserReq) throws BaseException {
         try {
             int result = userDao.deleteUser(getUserReq);
-            if (result == 1) return "result: 회원 삭제 성공";
-            else return "result: 회원 삭제 실패";
+            if (result == 1) return "회원 삭제 성공";
+            else return "회원 삭제 실패";
         } catch (Exception exception) { // DB에 이상이 있는 경우 에러 메시지를 보냅니다.
             throw new BaseException(DATABASE_ERROR);
         }

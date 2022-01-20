@@ -59,10 +59,11 @@ public class userDAO {
      */
 
     // 회원가입
-    public int createUser(PostUserReq postUserReq) {
+    public String createUser(PostUserReq postUserReq) {
         String createUserQuery = "insert into Homegarden_Client (homegardenID,clientID, clientPW, plantNickName, mode) VALUES (?,?,?,?,?)"; // 실행될 동적 쿼리문
         Object[] createUserParams = new Object[]{postUserReq.getHomegarden_barcode(),postUserReq.getClientID(), postUserReq.getPassword(), postUserReq.getPlantNickName(), postUserReq.getMode()}; // 동적 쿼리의 ?부분에 주입될 값
         String insertDesiredStateQuery = "INSERT INTO Desired_state(homegardenID, clientID, desired_light, desired_humidity) VALUES (?, ?, ?, ?);";
+        String presentSetupQuery = "INSERT INTO Present_state (homegardenID) VALUES (?)";
         this.jdbcTemplate.update(createUserQuery, createUserParams);
         System.out.println("=====================");
         System.out.println("사용자 회원가입");
@@ -74,28 +75,39 @@ public class userDAO {
         {
             Object[] insertDesiredStateParams = new Object[]{postUserReq.getHomegarden_barcode(), postUserReq.getClientID(), postUserReq.getDesired_illuminance(), postUserReq.getDesired_humidity()};
             this.jdbcTemplate.update(insertDesiredStateQuery, insertDesiredStateParams);
+            System.out.println("Manual mode");
         }
         else if(postUserReq.getMode().equals("A"))
         {
             Object[] insertDesiredStateParams = new Object[]{postUserReq.getHomegarden_barcode(), postUserReq.getClientID(), 200, 50};
             this.jdbcTemplate.update(insertDesiredStateQuery, insertDesiredStateParams);
+            System.out.println("Auto mode");
         }
+        this.jdbcTemplate.update(presentSetupQuery, postUserReq.getHomegarden_barcode());
+        System.out.println("Done");
 
-        String lastInserIdQuery = "select last_insert_id()"; // 가장 마지막에 삽입된(생성된) id값은 가져온다.
-        return this.jdbcTemplate.queryForObject(lastInserIdQuery, int.class); // 해당 쿼리문의 결과 마지막으로 삽인된 유저의 userIdx번호를 반환한다.
+        return "가입 : "+postUserReq.getClientID();
     }
 
     //사용자 삭제
     public int deleteUser(GetUserReq getUserReq){
         String deleteUserQuery1 = "Delete from Desired_state where clientID = ?";
-        String deleteUserQuery2 = "Delete from Homegarden_Client where clientID = ?";
+        String deleteUserQuery2 = "Delete from Present_state where homegardenID = ?";
+        String getHomegardenId = "SELECT HC.homegardenID from Homegarden_Client HC, Present_state PS WHERE HC.homegardenID = PS.homegardenID AND HC.clientID = ?";
+        String deleteUserQuery3 = "Delete from Homegarden_Client where clientID = ?";
         String clientID = getUserReq.getClientID();
+
+
+
+        this.jdbcTemplate.update(deleteUserQuery1, clientID);
+        String homegardenId = this.jdbcTemplate.queryForObject(getHomegardenId, String.class, clientID);
         System.out.println("=====================");
         System.out.println("사용자 정보삭제");
         System.out.println("ClientID: " + clientID);
         System.out.println("=====================");
-        this.jdbcTemplate.update(deleteUserQuery1, clientID);
-        return this.jdbcTemplate.update(deleteUserQuery2, clientID);
+        this.jdbcTemplate.update(deleteUserQuery2, homegardenId);
+
+        return this.jdbcTemplate.update(deleteUserQuery3, clientID);
     }
 
     //식물 닉네임 확인
