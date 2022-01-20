@@ -6,7 +6,7 @@ homegarden_barcode = "homegarden1"
 import boto3
 from botocore.client import Config
 import configKey as ck
-import cv2
+import cv2 
 import datetime as dt
 import os
 import base64
@@ -52,14 +52,18 @@ def connect_RDS(host, port, username, password, database):
     return conn, cursor
 
 # Callback when the subscribed topic receives a message
-def on_message_received(topic, payload, dup, qos, retain, **kwargs):
+def on_message_received(topic, payload, **kwargs):
     print("Received message from topic '{}': {}".format(topic, payload))
     jsonObject = json.loads(payload)
     state = jsonObject.get("state")
     desired = state.get("desired")
     manual_water = desired.get("manual_water")
     if(manual_water == "on"):
-        ser.write('w')
+        print("manual_water: " + manual_water)
+        ser.write(b'w')
+    elif(manual_water == "off"):
+        print("manual_water: " + manual_water)
+        ser.write(b'n')
         
 #IoT Core에 연결! 
 # Spin up resources
