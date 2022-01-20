@@ -63,7 +63,7 @@ public class userDAO {
         String createUserQuery = "insert into Homegarden_Client (homegardenID,clientID, clientPW, plantNickName, mode) VALUES (?,?,?,?,?)"; // 실행될 동적 쿼리문
         Object[] createUserParams = new Object[]{postUserReq.getHomegarden_barcode(),postUserReq.getClientID(), postUserReq.getPassword(), postUserReq.getPlantNickName(), postUserReq.getMode()}; // 동적 쿼리의 ?부분에 주입될 값
         String insertDesiredStateQuery = "INSERT INTO Desired_state(homegardenID, clientID, desired_light, desired_humidity) VALUES (?, ?, ?, ?);";
-        String presentSetupQuery = "INSERT INTO Present_state (homegardenID) VALUES (?)";
+        String presentSetupQuery = "INSERT INTO Present_state (homegardenID, humidity, light, water_level, phStatus, img) VALUES (?, 0, 0, 0, 0, 0)";
         this.jdbcTemplate.update(createUserQuery, createUserParams);
         System.out.println("=====================");
         System.out.println("사용자 회원가입");
