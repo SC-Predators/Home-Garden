@@ -64,13 +64,18 @@ public class userDAO {
         Object[] createUserParams = new Object[]{postUserReq.getHomegarden_barcode(),postUserReq.getClientID(), postUserReq.getPassword(), postUserReq.getPlantNickName(), postUserReq.getMode()}; // 동적 쿼리의 ?부분에 주입될 값
         String insertDesiredStateQuery = "INSERT INTO Desired_state(homegardenID, clientID, desired_light, desired_humidity) VALUES (?, ?, ?, ?);";
         this.jdbcTemplate.update(createUserQuery, createUserParams);
+        System.out.println("=====================");
+        System.out.println("사용자 회원가입");
+        System.out.println("사용자 ID: " + postUserReq.getClientID() + " 사용자 모드: "+postUserReq.getMode());
+        System.out.println("원하는 습도: " + postUserReq.getDesired_humidity() + " 원하는 조도: " + postUserReq.getDesired_illuminance());
+        System.out.println("=====================");
 
-        if(postUserReq.getMode() == "M")
+        if(postUserReq.getMode().equals("M"))
         {
             Object[] insertDesiredStateParams = new Object[]{postUserReq.getHomegarden_barcode(), postUserReq.getClientID(), postUserReq.getDesired_illuminance(), postUserReq.getDesired_humidity()};
             this.jdbcTemplate.update(insertDesiredStateQuery, insertDesiredStateParams);
         }
-        else if(postUserReq.getMode() == "A")
+        else if(postUserReq.getMode().equals("A"))
         {
             Object[] insertDesiredStateParams = new Object[]{postUserReq.getHomegarden_barcode(), postUserReq.getClientID(), 200, 50};
             this.jdbcTemplate.update(insertDesiredStateQuery, insertDesiredStateParams);
@@ -260,7 +265,7 @@ public class userDAO {
         Object[] updateDesiredStateParams = new Object[]{patchModeReq.getIlluminance(), patchModeReq.getHumidity(), patchModeReq.getClientID()};
         System.out.println("=====================");
         System.out.println("모드 업데이트");
-        System.out.println("clientID: " + patchModeReq + " desired_Humidity: " + patchModeReq.getHumidity() + " desired_light: " + patchModeReq.getIlluminance());
+        System.out.println("clientID: " + patchModeReq.getClientID() + " desired_Humidity: " + patchModeReq.getHumidity() + " desired_light: " + patchModeReq.getIlluminance());
         System.out.println("=====================");
         this.jdbcTemplate.update(updateModeQuery, updateModeParams);
         return this.jdbcTemplate.update(updateDesiredStateQuery, updateDesiredStateParams);
@@ -272,7 +277,7 @@ public class userDAO {
         //                                          "WHERE PS.homegardenID=HC.homegardenID AND HC.clientID = \"%s\" AND writeTime < \'%s\';", clientID, historyTime);
         String getModeQuery = "SELECT * FROM Desired_state DS, Homegarden_Client HC WHERE  HC.clientID = DS.clientID  AND DS.clientID = ?;";
         String clientID = getUserReq.getClientID();
-
+        System.out.println("=====================");
         return this.jdbcTemplate.queryForObject(getModeQuery,
                 (rs, rowNum) -> new PostUserModeRes(
                         rs.getString("mode"),
