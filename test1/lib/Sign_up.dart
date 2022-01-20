@@ -27,7 +27,7 @@ class _SignUP extends State<SignUP> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      // resizeToAvoidBottomInset: false,
       appBar: AppBar(
         centerTitle: true,
         backgroundColor: Color(0xffb2dfdb),
@@ -35,9 +35,10 @@ class _SignUP extends State<SignUP> {
           style: TextStyle(fontSize: 20, color: Colors.grey),),
       ),
 
-      body: Center(
+      body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
+
             Container(
               child: Row(
                 children: <Widget>[
@@ -50,6 +51,7 @@ class _SignUP extends State<SignUP> {
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
                         labelText: "User name",
+
                       ),
                     ),
                   ),
@@ -57,7 +59,7 @@ class _SignUP extends State<SignUP> {
                   Container(
                     child: TextButton(
                       onPressed: () {
-                        duplicateId(IDcontroll.text);
+                        duplicateId(IDcontroll.text, context);
                       },
                       child: Text("중복확인",
                         style: TextStyle(fontSize: 15, color: Colors.grey),),
@@ -181,8 +183,8 @@ class _SignUP extends State<SignUP> {
               margin: EdgeInsets.symmetric(vertical: 10),
               child: TextButton(
                 onPressed: (){
-                  finishSignup(Barcodecontroll.text, IDcontroll.text, Passcontroll.text, Plantcontroll.text, _autoChecked, illumcontroll.text, humicontroll.text);
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => MyHomePage(title: 'smart home garden',)));
+                  finishSignup (Barcodecontroll.text, IDcontroll.text, Passcontroll.text, Plantcontroll.text, _autoChecked, illumcontroll.text, humicontroll.text, context);
+
                 },
                 child: Text("FINISH",
                   style: TextStyle(fontSize: 20, color: Colors.grey),),

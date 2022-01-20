@@ -2,106 +2,327 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:test1/HomePage.dart';
+import 'package:test1/main.dart';
 import 'package:test1/mainPage.dart';
 import 'historyHomepage.dart';
 
 // 로그인 정보 확인 - 성공여부/바코드/닉네임
- void checkID (String id, String pass, BuildContext context) async{
-  userID send;
-  var data = {
-    "clientID" : id,
-    "clientPW" : pass
-  };
+ void checkID (String id, String pass, BuildContext context) async {
+   if (id == '' || pass == '' ){ // 사용자 입력 값이 없을 시 경고창 알림
+     showDialog(
+         context: context,
+         barrierDismissible: false,
+         builder: (BuildContext context) {
+           return AlertDialog(
+             title: Text('알림'),
+             content: SingleChildScrollView(
+                 child: ListBody(
+                   children: [
+                     Text('ID 및 Password를 입력해주세요.'),
+                   ],
+                 )
+             ),
+             actions: <Widget>[
+               FlatButton(
+                   onPressed: () {
+                     Navigator.of(context).pop();
+                   },
+                   child: Text('ok')
+               )
+             ],
+           );
+         }
+     );
+   }
 
-  String url = "http://218.152.140.80:23628/app/users/log-in";
-  var body = json.encode(data);
+   else { // 사용자 입력 확인 시 정보 확인
+     userID send;
+     var data = {
+       "clientID": id,
+       "clientPW": pass
+     };
 
-  http.Response res = await http.post(url,
-      headers:  {"Content-Type": "application/json"},
-      body: body
-  );
+     String url = "http://218.152.140.80:23628/app/users/log-in";
+     var body = json.encode(data);
 
-  if(res.statusCode == 200) {
-    String responsebody = utf8.decode (res.bodyBytes);
-    Map <String, dynamic> user = jsonDecode(responsebody);
-    print(user);
-    userID send = userID(id, user['result']['userStatus'], user['result']['plantNickName']);
-    showData(send, id, context);
-  }
+     http.Response res = await http.post(url,
+         headers: {"Content-Type": "application/json"},
+         body: body
+     );
 
-  else {
-    print("fail");
-  }
+     if (res.statusCode == 200) { // API 통신 성공 시
+       String responsebody = utf8.decode(res.bodyBytes);
+       Map <String, dynamic> user = jsonDecode(responsebody);
+       print(user);
+
+
+       if (user['isSuccess'] == false) { // 로그인 정보 불일치
+         showDialog(
+             context: context,
+             barrierDismissible: false,
+             builder: (BuildContext context) {
+               return AlertDialog(
+                 title: Text('알림'),
+                 content: SingleChildScrollView(
+                     child: ListBody(
+                       children: [
+                         Text('로그인 정보가 불일치합니다.'),
+                       ],
+                     )
+                 ),
+                 actions: <Widget>[
+                   FlatButton(
+                       onPressed: () {
+                         Navigator.of(context).pop();
+                       },
+                       child: Text('ok')
+                   )
+                 ],
+               );
+             }
+         );
+       }
+       else { // 로그인 정보 일치
+         userID send = userID(
+             id, user['result']['userStatus'], user['result']['plantNickName']);
+         showData(send, id, context); // 아이디에 따라 닉네임, 모드 정보 가져오기
+       }
+     }
+
+     else { // 통신 실패 시
+       showDialog(
+           context: context,
+           barrierDismissible: false,
+           builder: (BuildContext context) {
+             return AlertDialog(
+               title: Text('알림'),
+               content: SingleChildScrollView(
+                   child: ListBody(
+                     children: [
+                       Text('연결이 불가능합니다.\n다시 시도해주세요'),
+                     ],
+                   )
+               ),
+               actions: <Widget>[
+                 FlatButton(
+                     onPressed: () {
+                       Navigator.of(context).pop();
+                     },
+                     child: Text('ok')
+                 )
+               ],
+             );
+           }
+       );
+       print("fail");
+     }
+   }
 }
 
 
+
 //아이디 중복 확인 - 중복 여부
-void duplicateId (String id) async{
-  var data = {
-    "clientID" : id
-  };
+void duplicateId (String id, BuildContext context) async {
+  if (id == '') { // 사용자 입력이 없을 시
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('알림'),
+            content: SingleChildScrollView(
+                child: ListBody(
+                  children: [
+                    Text('ID를 입력해주세요'),
+                  ],
+                )
+            ),
+            actions: <Widget>[
+              FlatButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('ok')
+              )
+            ],
+          );
+        }
+    );
+  }
 
-  String url = "http://218.152.140.80:23628/app/users/sign-up/checkID";
-  var body = json.encode(data);
+  else { // 사용자 입력 정보 확인 시 중복 확인
+    var data = {
+      "clientID": id
+    };
 
-  http.Response res = await http.post(url,
-  headers:  {"Content-Type": "application/json"},
-  body: body
-  );
+    String url = "http://218.152.140.80:23628/app/users/sign-up/checkID";
+    var body = json.encode(data);
 
-  if(res.statusCode == 200) {
-    String responsebody = utf8.decode (res.bodyBytes);
-    Map <String, dynamic> user = jsonDecode(responsebody);
-    print(user['result']);
+    http.Response res = await http.post(url,
+        headers: {"Content-Type": "application/json"},
+        body: body
+    );
 
-      if(user['result'].toString() == 'true') {
+    if (res.statusCode == 200) { // 통신 성공
+      String responsebody = utf8.decode(res.bodyBytes);
+      Map <String, dynamic> user = jsonDecode(responsebody);
+      print(user['result']);
+
+      if (user['result'].toString() == 'true') {
+        showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text('알림'),
+                content: SingleChildScrollView(
+                    child: ListBody(
+                      children: [
+                        Text('사용가능한 ID 입니다.'),
+                      ],
+                    )
+                ),
+                actions: <Widget>[
+                  FlatButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text('ok')
+                  )
+                ],
+              );
+            }
+        );
         print("id 사용가능");
       }
+
       else {
+        showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text('알림'),
+                content: SingleChildScrollView(
+                    child: ListBody(
+                      children: [
+                        Text('사용불가능한 ID 입니다.\n다시 입력해주세요'),
+                      ],
+                    )
+                ),
+                actions: <Widget>[
+                  FlatButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text('ok')
+                  )
+                ],
+              );
+            }
+        );
+
         print("id 사용불가능");
       }
+    }
   }
 }
 
 //화원가입 - 마지막으로 회원정보 DB에 전송하기
-void finishSignup (String barcode, String id, String password, String nickname, bool mode, String illum, String humid) async {
-  var data;
-  if (mode == true) {
-    data = {
-      "homegarden_barcode": barcode,
-      "clientID": id,
-      "password": password,
-      "plantNickName": nickname,
-      "mode": 'A'
-    };
+void finishSignup(String barcode, String id, String password, String nickname, bool mode, String illum, String humid, BuildContext context) async {
+  if (barcode != '' && id != '' && password != '' && nickname != '') {
+    var data;
+    if (mode == true) {
+      data = {
+        "homegarden_barcode": barcode,
+        "clientID": id,
+        "password": password,
+        "plantNickName": nickname,
+        "mode": 'A'
+      };
+    }
+    else {
+      if (illum != '' && humid != '') {
+        data = {
+          "homegarden_barcode": barcode,
+          "clientID": id,
+          "password": password,
+          "plantNickName": nickname,
+          "mode": 'M',
+          "desired_illuminance": illum,
+          "desired_humidity": humid
+        };
+      }
+    }
+    print(data);
+
+    String url = "http://218.152.140.80:23628/app/users/sign-up";
+    var body = json.encode(data);
+
+    http.Response res = await http.post(url,
+        headers: {"Content-Type": "application/json"},
+        body: body
+    );
+
+    if (res.statusCode == 200) {
+      String responsebody = utf8.decode(res.bodyBytes);
+      Map<String, dynamic> user = jsonDecode(responsebody);
+      print(user);
+    }
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('알림'),
+            content: SingleChildScrollView(
+                child: ListBody(
+                  children: [
+                    Text('회원가입에 성공하였습니다.'),
+                  ],
+                )
+            ),
+            actions: <Widget>[
+              FlatButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('ok')
+              )
+            ],
+          );
+        }
+    );
+    Navigator.push(context, MaterialPageRoute(builder: (_) => MyHomePage(title: 'SMART HOME GARDEN',)));
   }
   else {
-    data = {
-      "homegarden_barcode": barcode,
-      "clientID": id,
-      "password": password,
-      "plantNickName": nickname,
-      "mode": 'M',
-      "desired_illuminance" : illum,
-      "desired_humidity" : humid
-    };
-  }
-
-  String url = "http://218.152.140.80:23628/app/users/sign-up";
-  var body = json.encode(data);
-
-  http.Response res = await http.post(url,
-  headers:  {"Content-Type": "application/json"},
-  body: body
-  );
-
-  if (res.statusCode == 200) {
-    String responsebody = utf8.decode(res.bodyBytes);
-    Map<String, dynamic> user = jsonDecode(responsebody);
-    print(user);
-
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('알림'),
+            content: SingleChildScrollView(
+                child: ListBody(
+                  children: [
+                    Text('정보를 입력하세요'),
+                  ],
+                )
+            ),
+            actions: <Widget>[
+              FlatButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('ok')
+              )
+            ],
+          );
+        }
+    );
   }
 }
+
 
 // 홈화면 및 기록확인 화면 정보 가져오기 - 습도, 조도, 산성도, 높이, 이미지
 void getData (String id, BuildContext context, String _title) async {
@@ -184,12 +405,44 @@ void showData (userID sent, String id, BuildContext context) async{
     String responsebody = utf8.decode (res.bodyBytes);
     Map <String, dynamic> user = jsonDecode(responsebody);
     print(user);
-    Navigator.push(context, MaterialPageRoute(builder: (_) => mainPage(userid: sent,
-      humid: user['result']['humidity'],
-      illum: user['result']['illuminate'],
-      depth: user['result']['waterDepth'],
-      ph: user['result']['ph'],
-    img: user['result']['imgURL'],)));
+    if (user['result']['humidity'] == null || user['result']['illuminate'] == null ||
+        user['result']['waterDepth'] == null || user['result']['ph'] == null ||
+        user['result']['imgURL'] == null){
+      showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('알림'),
+              content: SingleChildScrollView(
+                  child: ListBody(
+                    children: [
+                      Text('장치 상태가 기록되지 않았습니다.'),
+                    ],
+                  )
+              ),
+              actions: <Widget>[
+                FlatButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('ok')
+                )
+              ],
+            );
+          }
+      );
+
+    }
+    else {
+      Navigator.push(context, MaterialPageRoute(builder: (_) =>
+          mainPage(userid: sent,
+            humid: user['result']['humidity'],
+            illum: user['result']['illuminate'],
+            depth: user['result']['waterDepth'],
+            ph: user['result']['ph'],
+            img: user['result']['imgURL'],)));
+    }
   }
 
   else {
@@ -233,5 +486,91 @@ void controlData (String id, bool led, bool water) async {
     Map <String, dynamic> user = jsonDecode(responsebody);
     print(user);
   }
-  else print('controlData fail');
+  else
+    print('controlData fail');
 }
+
+//모드 변경...모드 상태 가져오기
+// void checkID (String id, String pass, BuildContext context) async{
+//   userID send;
+//   var data = {
+//     "clientID" : id,
+//     "clientPW" : pass
+//   };
+//
+//   String url = "http://218.152.140.80:23628/app/users/log-in";
+//   var body = json.encode(data);
+//
+//   http.Response res = await http.post(url,
+//       headers:  {"Content-Type": "application/json"},
+//       body: body
+//   );
+//
+//   if(res.statusCode == 200) {
+//     String responsebody = utf8.decode (res.bodyBytes);
+//     Map <String, dynamic> user = jsonDecode(responsebody);
+//     print(user);
+//     if (user['isSuccess'] == false) {
+//       showDialog(
+//           context: context,
+//           barrierDismissible: false,
+//           builder: (BuildContext context) {
+//             return AlertDialog(
+//               title: Text('팝업 메시지'),
+//               content: SingleChildScrollView(
+//                   child: ListBody(
+//                     children: [
+//                       Text('로그인 정보가 불일치합니다.'),
+//                     ],
+//                   )
+//               ),
+//               actions: <Widget>[
+//                 FlatButton(
+//                     onPressed: () {
+//                       Navigator.of(context).pop();
+//                     },
+//                     child: Text('ok')
+//                 )
+//               ],
+//             );
+//           }
+//       );
+//     }
+//     else {
+//       userID send = userID(
+//           id, user['result']['userStatus'], user['result']['plantNickName']);
+//       showData(send, id, context);
+//     }
+//   }
+//
+//
+//   else {
+//     showDialog(
+//         context: context,
+//         barrierDismissible: false,
+//         builder: (BuildContext context) {
+//           return AlertDialog(
+//             title: Text('팝업 메시지'),
+//             content: SingleChildScrollView(
+//                 child: ListBody(
+//                   children: [
+//                     Text('로그인 정보가 불일치합니다.'),
+//                   ],
+//                 )
+//             ),
+//             actions: <Widget>[
+//               FlatButton(
+//                   onPressed: () {
+//                     Navigator.of(context).pop();
+//                   },
+//                   child: Text('ok')
+//               )
+//             ],
+//           );
+//         }
+//     );
+//
+//
+//     print("fail");
+//   }
+// }
