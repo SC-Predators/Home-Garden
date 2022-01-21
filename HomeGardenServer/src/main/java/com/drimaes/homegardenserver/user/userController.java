@@ -103,6 +103,22 @@ public class userController {
         }
     }
     /**
+     * 홈가든 현재 장치작동상태 받아오기.
+     * [post] app/users/plant/present/acutaldevice
+
+    @ResponseBody
+    @PostMapping("/plant/present/actualdevice")
+    public BaseResponse<PostPresentActualDeviceRes> getPresentDeviceState(@RequestBody GetUserReq getUserReq){
+        try{
+            PostPresentActualDeviceRes postPresentActualDeviceRes = userService.getPresentDeviceState(getUserReq);
+            return new BaseResponse<>(postPresentActualDeviceRes);
+        } catch (BaseException exception){
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+    */
+
+    /**
      * 식물 닉네임 받아오기.
      * [get] app/users/plant/nickname
      */

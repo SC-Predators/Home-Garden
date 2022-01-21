@@ -56,7 +56,7 @@ public class userProvider {
         }
 
         if (postLoginReq.getClientPW().equals(password)) { //비말번호가 일치한다면 userIdx를 가져온다.
-            return new PostLoginRes(userDao.getPwd(postLoginReq).getHomeGarden_barcode(), userDao.getPwd(postLoginReq).getPlantNickname() ,userDao.getPwd(postLoginReq).getStatus());
+            return new PostLoginRes(userDao.getPwd(postLoginReq).getHomeGarden_barcode(), userDao.getPwd(postLoginReq).getPlantNickname() ,userDao.getPwd(postLoginReq).getStatus(), userDao.postPlantMode(postLoginReq).getMode(), userDao.postPlantMode(postLoginReq).getHumidity(), userDao.postPlantMode(postLoginReq).getIlluminance());
 
         } else { // 비밀번호가 다르다면 에러메세지를 출력한다.
             throw new BaseException(FAILED_TO_LOGIN);

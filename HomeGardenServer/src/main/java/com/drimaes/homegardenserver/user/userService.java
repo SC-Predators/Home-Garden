@@ -93,7 +93,19 @@ public class userService {
             String postManualModeRes = "아직 만드는 중... 일단  API 연결 테스트!";
             return postManualModeRes;
         } catch (Exception exception){
-            throw new BaseException((DATABASE_ERROR));
+            throw new BaseException(DATABASE_ERROR);
         }
     }
+
+    //현재 장치 작동 상태 가져오기
+    /*
+    public PostPresentActualDeviceRes getPresentDeviceState(GetUserReq getUserReq) throws BaseException{
+        try{
+            PostPresentActualDeviceRes postPresentActualDeviceRes = userDao.getPresentDeviceState(getUserReq);
+            return postPresentActualDeviceRes;
+        } catch (Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+    */
 }

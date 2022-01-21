@@ -313,5 +313,22 @@ public class userDAO {
                         rs.getInt("desired_humidity")),
                         clientID);
     }
+    //유저 모드 가져오기
+    public PostUserModeRes postPlantMode(PostLoginReq postLoginReq){
+        //String.format("SELECT COUNT(*) FROM Present_state PS, Homegarden_Client HC " +
+        //                                          "WHERE PS.homegardenID=HC.homegardenID AND HC.clientID = \"%s\" AND writeTime < \'%s\';", clientID, historyTime);
+        String getModeQuery = "SELECT * FROM Desired_state DS, Homegarden_Client HC WHERE  HC.clientID = DS.clientID  AND DS.clientID = ?;";
+        String clientID = postLoginReq.getClientID();
+        System.out.println("=====================");
+        System.out.println("사용자 모드 가져오기");
+        System.out.println("clientID: " + postLoginReq.getClientID());
+        System.out.println("=====================");
+        return this.jdbcTemplate.queryForObject(getModeQuery,
+                (rs, rowNum) -> new PostUserModeRes(
+                        rs.getString("mode"),
+                        rs.getInt("desired_light"),
+                        rs.getInt("desired_humidity")),
+                clientID);
+    }
 
 }
