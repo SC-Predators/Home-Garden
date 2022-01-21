@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:test1/API.dart';
 import 'package:test1/Sign_up.dart';
 import 'HomePage.dart';
 
@@ -122,8 +123,7 @@ class _myControl extends State<myControl> {
                   child: Text("ACTUAL",
                     style: TextStyle(fontSize: 25, color: Colors.grey),),
                   onPressed: () {
-                    // saveMode(widget.title, mode, illuminace, humidity, context)
-
+                    saveControl(widget.title, widget.title, _ledcheck_on, _watercheck_on, context);
                   },
                 )
             ),

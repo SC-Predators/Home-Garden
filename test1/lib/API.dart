@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:test1/HomePage.dart';
+import 'package:test1/Mode.dart';
 import 'package:test1/main.dart';
 import 'package:test1/mainPage.dart';
 import 'historyHomepage.dart';
@@ -82,9 +83,11 @@ import 'historyHomepage.dart';
              }
          );
        }
+
        else { // 로그인 정보 일치
+         print(user['result']['desired_light'] is int);
          userID send = userID(
-             id, user['result']['userStatus'], user['result']['plantNickName']);
+             id, user['result']['moode'], user['result']['desired_humidity'], user['result']['desired_light'], user['result']['plantNickName']);
          showData(send, id, context); // 아이디에 따라 닉네임, 모드 정보 가져오기
        }
      }
@@ -567,4 +570,188 @@ void finishMode (String id, String mode, String illum, String humid, BuildContex
       );
     }
   }
+}
+
+//mode 페이지 작동시 새로 정보 가져오기
+
+void getPresentMode (int index, String title, String id, BuildContext context) async {
+   if (index =='2') {
+     userID send;
+     var data = {
+       "clientID": id,
+     };
+
+     String url = "http://218.152.140.80:23628/app/users/plant/mode";
+     var body = json.encode(data);
+
+     http.Response res = await http.patch(url,
+         headers: {"Content-Type": "application/json"},
+         body: body
+     );
+
+     if (res.statusCode == 200) {
+       String responsebody = utf8.decode(res.bodyBytes);
+       Map <String, dynamic> user = jsonDecode(responsebody);
+       print(user);
+       if (user['isSuccess'] == false) {
+         showDialog(
+             context: context,
+             barrierDismissible: false,
+             builder: (BuildContext context) {
+               return AlertDialog(
+                 title: Text('알림'),
+                 content: SingleChildScrollView(
+                     child: ListBody(
+                       children: [
+                         Text('연결에 실패하였습니다\n다시 시도해주세요'),
+                       ],
+                     )
+                 ),
+                 actions: <Widget>[
+                   FlatButton(
+                       onPressed: () {
+                         Navigator.of(context).pop();
+                       },
+                       child: Text('ok')
+                   )
+                 ],
+               );
+             }
+         );
+       }
+
+       else {
+         showDialog(
+             context: context,
+             barrierDismissible: false,
+             builder: (BuildContext context) {
+               return AlertDialog(
+                 title: Text('알림'),
+                 content: SingleChildScrollView(
+                     child: ListBody(
+                       children: [
+                         Text('정보를 변경하였습니다.'),
+                       ],
+                     )
+                 ),
+                 actions: <Widget>[
+                   FlatButton(
+                       onPressed: () {
+                         Navigator.of(context).pop();
+                       },
+                       child: Text('ok')
+                   )
+                 ],
+               );
+             }
+         );
+       }
+       Navigator.push(context, MaterialPageRoute(builder: (_) =>
+           myMode(title: title,
+               presentMode: user['result']['mode'],
+               presentHumid: user['result']['humidity'],
+               presentLight: user['result']['illuminace'])
+       )
+       );
+     }
+   }
+
+}
+
+// 사용자 제어 상태 전송하기
+
+void saveControl (String title, String nickName, bool led, bool water, BuildContext context) async {
+  userID send;
+  String _light ;
+  String _water;
+  if (led == true) {
+    _light = 'on';
+  }
+  else {
+    _light = 'off';
+  }
+
+  if (water == true) {
+    _water = 'on';
+  }
+  else {
+    _water = 'off';
+  }
+
+
+  var data = {
+    "clientID": "${nickName}",
+    "light": "${_light}",
+    "water": "${_water}"
+  };
+
+  print(data);
+
+  String url = "https://sxo1vvu9ai.execute-api.ap-northeast-2.amazonaws.com//app/users/plant/active";
+  var body = json.encode(data);
+
+  http.Response res = await http.patch(url,
+      headers: {"Content-Type": "application/json"},
+      body: body
+  );
+
+  if (res.statusCode == 200) {
+    String responsebody = utf8.decode(res.bodyBytes);
+    Map <String, dynamic> user = jsonDecode(responsebody);
+    print(user);
+    if (user['isSuccess'] == false) {
+      showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('알림'),
+              content: SingleChildScrollView(
+                  child: ListBody(
+                    children: [
+                      Text('연결에 실패하였습니다\n다시 시도해주세요'),
+                    ],
+                  )
+              ),
+              actions: <Widget>[
+                FlatButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('ok')
+                )
+              ],
+            );
+          }
+      );
+    }
+
+    else {
+      showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('알림'),
+              content: SingleChildScrollView(
+                  child: ListBody(
+                    children: [
+                      Text('상태가 변경되었습니다.'),
+                    ],
+                  )
+              ),
+              actions: <Widget>[
+                FlatButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('ok')
+                )
+              ],
+            );
+          }
+      );
+    }
+  }
+  print("saveControl");
 }

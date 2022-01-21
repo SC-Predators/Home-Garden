@@ -6,11 +6,20 @@ import 'HomePage.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+class modeData {
+  String mode;
+  String light;
+  String humid;
+
+  modeData(this.mode, this.humid, this.light);
+}
 
 class myMode extends StatefulWidget {
   final String title; // 닉네임 이름
   String presentMode;
-  myMode({Key? key, required this.title, required this.presentMode}) : super(key: key);
+  int presentHumid;
+  int presentLight;
+  myMode({Key? key, required this.title, required this.presentMode, required this.presentHumid, required this.presentLight}) : super(key: key);
 
 
   bool _manualCheck = false;
@@ -28,8 +37,7 @@ class _myMode extends State<myMode> {
 
   Object? mode = 'auto';
 
-  void fistMode() {
-    print(widget.presentMode);
+  void firstMode() {
     if (widget.presentMode == 'A') {
       widget._autoCheck = true;
     }
@@ -41,7 +49,7 @@ class _myMode extends State<myMode> {
 
   @override
   Widget build(BuildContext context) {
-    fistMode();
+    firstMode();
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -122,6 +130,7 @@ class _myMode extends State<myMode> {
                             decoration: InputDecoration(
                               border: OutlineInputBorder(),
                               labelText: "Illuminance",
+                              hintText: widget.presentLight.toString(),
                             ),
                           ),
                         ),
@@ -134,6 +143,7 @@ class _myMode extends State<myMode> {
                             decoration: InputDecoration(
                               border: OutlineInputBorder(),
                               labelText: "Humidity",
+                              hintText: widget.presentHumid.toString(),
                             ),
                           ),
                         )

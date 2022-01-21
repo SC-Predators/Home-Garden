@@ -13,21 +13,13 @@ import 'package:http/http.dart' as http;
 class userID {
   String userId= '';
   String userMode = '';
+  int userHumid = 0;
+  int userLight = 0;
   String nickname = '';
 
-  userID(this.userId, this.userMode, this.nickname);
+  userID(this.userId, this.userMode, this.userHumid, this.userLight, this.nickname);
 }
 
-// class innerData {
-//   String img;
-//   String humid;
-//   String illuminate;
-//   String waterDepth;
-//   String ph;
-//
-//   innerData(this.img, this.humid, this.illuminate, this.waterDepth, this.ph);
-//
-// }
 
 
 class mainPage extends StatefulWidget {
@@ -46,6 +38,8 @@ class mainPage extends StatefulWidget {
 
 class _mainPage extends State<mainPage>{
 
+
+
   int _counter = 0;
   int _currentIndex = 0;
 
@@ -62,18 +56,20 @@ class _mainPage extends State<mainPage>{
     setState(() {
       _currentIndex = index;
       print(_currentIndex);
+
     });
   }
 
 
   Widget build (BuildContext context) {
-    print("사용자 모드 : ");
-    print(widget.userid.userMode);
+    getPresentMode(_currentIndex, widget.userid.nickname, widget.userid.userId, context);
+
+
 
     final List<Widget> _children = [
       home(id: widget.userid.userId, title: widget.userid.nickname, humidity: widget.humid, illuminace: widget.illum, waterDepth: widget.depth, ph: widget.ph,img: widget.img,),
       myHistory(title: widget.userid.nickname, userid: widget.userid.userId,), // 오늘 날짜 전달?
-      myMode(title: widget.userid.nickname, presentMode: widget.userid.userMode,), // 현재 모드 전달
+      myMode(title: widget.userid.nickname, presentMode: widget.userid.userMode, presentHumid: widget.userid.userHumid, presentLight: widget.userid.userLight), // 현재 모드 전달
       myControl(title: widget.userid.nickname)]; // 현재 장치 모드 전달
     return Scaffold(
       body: _children[_currentIndex],
