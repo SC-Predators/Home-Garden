@@ -29,6 +29,7 @@ class _myMode extends State<myMode> {
   Object? mode = 'auto';
 
   void fistMode() {
+    print(widget.presentMode);
     if (widget.presentMode == 'A') {
       widget._autoCheck = true;
     }
@@ -36,6 +37,7 @@ class _myMode extends State<myMode> {
       widget._manualCheck = true;
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -147,7 +149,7 @@ class _myMode extends State<myMode> {
                       style: TextStyle(fontSize: 20, color: Colors.grey),),
                     onPressed: () {
                       // saveMode(widget.title, mode, illuminace, humidity, context)
-
+                      finishMode(widget.title, widget.presentMode, mode_illum.text, mode_humidity.text, context);
                     },
                   )
               ),

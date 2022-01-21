@@ -268,32 +268,33 @@ void finishSignup(String barcode, String id, String password, String nickname, b
       String responsebody = utf8.decode(res.bodyBytes);
       Map<String, dynamic> user = jsonDecode(responsebody);
       print(user);
-    }
-    showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('알림'),
-            content: SingleChildScrollView(
-                child: ListBody(
-                  children: [
-                    Text('회원가입에 성공하였습니다.'),
-                  ],
+
+      showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('알림'),
+              content: SingleChildScrollView(
+                  child: ListBody(
+                    children: [
+                      Text('회원가입에 성공하였습니다.'),
+                    ],
+                  )
+              ),
+              actions: <Widget>[
+                FlatButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('ok')
                 )
-            ),
-            actions: <Widget>[
-              FlatButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text('ok')
-              )
-            ],
-          );
-        }
-    );
-    Navigator.push(context, MaterialPageRoute(builder: (_) => MyHomePage(title: 'SMART HOME GARDEN',)));
+              ],
+            );
+          }
+      );
+    }
+    // Navigator.push(context, MaterialPageRoute(builder: (_) => MyHomePage(title: 'SMART HOME GARDEN',)));
   }
   else {
     showDialog(
@@ -491,86 +492,79 @@ void controlData (String id, bool led, bool water) async {
 }
 
 //모드 변경...모드 상태 가져오기
-// void checkID (String id, String pass, BuildContext context) async{
-//   userID send;
-//   var data = {
-//     "clientID" : id,
-//     "clientPW" : pass
-//   };
-//
-//   String url = "http://218.152.140.80:23628/app/users/log-in";
-//   var body = json.encode(data);
-//
-//   http.Response res = await http.post(url,
-//       headers:  {"Content-Type": "application/json"},
-//       body: body
-//   );
-//
-//   if(res.statusCode == 200) {
-//     String responsebody = utf8.decode (res.bodyBytes);
-//     Map <String, dynamic> user = jsonDecode(responsebody);
-//     print(user);
-//     if (user['isSuccess'] == false) {
-//       showDialog(
-//           context: context,
-//           barrierDismissible: false,
-//           builder: (BuildContext context) {
-//             return AlertDialog(
-//               title: Text('팝업 메시지'),
-//               content: SingleChildScrollView(
-//                   child: ListBody(
-//                     children: [
-//                       Text('로그인 정보가 불일치합니다.'),
-//                     ],
-//                   )
-//               ),
-//               actions: <Widget>[
-//                 FlatButton(
-//                     onPressed: () {
-//                       Navigator.of(context).pop();
-//                     },
-//                     child: Text('ok')
-//                 )
-//               ],
-//             );
-//           }
-//       );
-//     }
-//     else {
-//       userID send = userID(
-//           id, user['result']['userStatus'], user['result']['plantNickName']);
-//       showData(send, id, context);
-//     }
-//   }
-//
-//
-//   else {
-//     showDialog(
-//         context: context,
-//         barrierDismissible: false,
-//         builder: (BuildContext context) {
-//           return AlertDialog(
-//             title: Text('팝업 메시지'),
-//             content: SingleChildScrollView(
-//                 child: ListBody(
-//                   children: [
-//                     Text('로그인 정보가 불일치합니다.'),
-//                   ],
-//                 )
-//             ),
-//             actions: <Widget>[
-//               FlatButton(
-//                   onPressed: () {
-//                     Navigator.of(context).pop();
-//                   },
-//                   child: Text('ok')
-//               )
-//             ],
-//           );
-//         }
-//     );
-//
-//
-//     print("fail");
-//   }
-// }
+void finishMode (String id, String mode, String illum, String humid, BuildContext context) async {
+  userID send;
+  var data = {
+    "clientID": id,
+    "mode": mode,
+    "illuminace": illum,
+    "humidity": humid
+  };
+
+  String url = "http://218.152.140.80:23628/app/users/plant/mode";
+  var body = json.encode(data);
+
+  http.Response res = await http.patch(url,
+      headers: {"Content-Type": "application/json"},
+      body: body
+  );
+
+  if (res.statusCode == 200) {
+    String responsebody = utf8.decode(res.bodyBytes);
+    Map <String, dynamic> user = jsonDecode(responsebody);
+    print(user);
+    if (user['isSuccess'] == false) {
+      showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('알림'),
+              content: SingleChildScrollView(
+                  child: ListBody(
+                    children: [
+                      Text('연결에 실패하였습니다\n다시 시도해주세요'),
+                    ],
+                  )
+              ),
+              actions: <Widget>[
+                FlatButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('ok')
+                )
+              ],
+            );
+          }
+      );
+    }
+
+    else {
+      showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('알림'),
+              content: SingleChildScrollView(
+                  child: ListBody(
+                    children: [
+                      Text('정보를 변경하였습니다.'),
+                    ],
+                  )
+              ),
+              actions: <Widget>[
+                FlatButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('ok')
+                )
+              ],
+            );
+          }
+      );
+    }
+  }
+}

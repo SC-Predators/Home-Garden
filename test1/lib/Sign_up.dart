@@ -184,7 +184,6 @@ class _SignUP extends State<SignUP> {
               child: TextButton(
                 onPressed: (){
                   finishSignup (Barcodecontroll.text, IDcontroll.text, Passcontroll.text, Plantcontroll.text, _autoChecked, illumcontroll.text, humicontroll.text, context);
-
                 },
                 child: Text("FINISH",
                   style: TextStyle(fontSize: 20, color: Colors.grey),),

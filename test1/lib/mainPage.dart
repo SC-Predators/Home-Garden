@@ -18,16 +18,16 @@ class userID {
   userID(this.userId, this.userMode, this.nickname);
 }
 
-class innerData {
-  String img;
-  String humid;
-  String illuminate;
-  String waterDepth;
-  String ph;
-
-  innerData(this.img, this.humid, this.illuminate, this.waterDepth, this.ph);
-
-}
+// class innerData {
+//   String img;
+//   String humid;
+//   String illuminate;
+//   String waterDepth;
+//   String ph;
+//
+//   innerData(this.img, this.humid, this.illuminate, this.waterDepth, this.ph);
+//
+// }
 
 
 class mainPage extends StatefulWidget {
@@ -67,6 +67,8 @@ class _mainPage extends State<mainPage>{
 
 
   Widget build (BuildContext context) {
+    print("사용자 모드 : ");
+    print(widget.userid.userMode);
 
     final List<Widget> _children = [
       home(id: widget.userid.userId, title: widget.userid.nickname, humidity: widget.humid, illuminace: widget.illum, waterDepth: widget.depth, ph: widget.ph,img: widget.img,),
