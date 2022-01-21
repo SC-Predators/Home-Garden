@@ -6,7 +6,7 @@ import 'HomePage.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-class modeData {
+class modeData { // 현재 모드 정보를 담은 class
   String mode;
   String light;
   String humid;
@@ -14,12 +14,14 @@ class modeData {
   modeData(this.mode, this.humid, this.light);
 }
 
-class myMode extends StatefulWidget {
+class myMode extends StatefulWidget { // 현재 모드 및 모드관련 정보
   final String title; // 닉네임 이름
+  String id;
   String presentMode;
   int presentHumid;
   int presentLight;
-  myMode({Key? key, required this.title, required this.presentMode, required this.presentHumid, required this.presentLight}) : super(key: key);
+
+  myMode({Key? key, required this.title, required this.id, required this.presentMode, required this.presentHumid, required this.presentLight}) : super(key: key);
 
 
   bool _manualCheck = false;
@@ -36,8 +38,13 @@ class _myMode extends State<myMode> {
   TextEditingController mode_humidity = TextEditingController();
 
   Object? mode = 'auto';
-
+  int go = 1;
   void firstMode() {
+    getPresentMode(2, widget.title, widget.id, context).then((returnResult) =>{
+      widget.presentMode = returnResult.mode}
+    );
+
+    print(widget.presentMode);
     if (widget.presentMode == 'A') {
       widget._autoCheck = true;
     }
@@ -117,7 +124,6 @@ class _myMode extends State<myMode> {
                   )
               ),
 
-              if (widget._manualCheck == true)
 
                 Container(
                     child: Column(
@@ -150,6 +156,7 @@ class _myMode extends State<myMode> {
                       ],
                     )
                 ),
+
               Container( // SAVE 버튼
                   margin: EdgeInsets.only(top: 40),
                   padding: EdgeInsets.symmetric(vertical: 5, horizontal: 150),
@@ -159,7 +166,11 @@ class _myMode extends State<myMode> {
                       style: TextStyle(fontSize: 20, color: Colors.grey),),
                     onPressed: () {
                       // saveMode(widget.title, mode, illuminace, humidity, context)
-                      finishMode(widget.title, widget.presentMode, mode_illum.text, mode_humidity.text, context);
+                      print(widget.presentMode);
+                      go = 0;
+                      finishMode(go, widget.id, widget.presentMode, mode_illum.text, mode_humidity.text, context);
+                      go = 1;
+
                     },
                   )
               ),
