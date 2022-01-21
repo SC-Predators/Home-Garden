@@ -31,7 +31,7 @@ class _SignUP extends State<SignUP> {
       appBar: AppBar(
         centerTitle: true,
         backgroundColor: Color(0xffb2dfdb),
-        title: Text("Smart Home Garden",
+        title: Text("SMART HOME GARDEN",
           style: TextStyle(fontSize: 20, color: Colors.grey),),
       ),
 

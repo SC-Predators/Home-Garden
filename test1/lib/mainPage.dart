@@ -43,33 +43,35 @@ class _mainPage extends State<mainPage>{
   int _counter = 0;
   int _currentIndex = 0;
 
+
   bool _isChecked1 = false;
   bool _isChecked2 = false;
-  String humidity = '0';
-  String illum = '0';
-  String ph = '0';
-  String depth = '0';
-  String bottomSelect = '0';
-  String mode = 'C';
+  // String humidity = '0';
+  // String illum = '0';
+  // String ph = '0';
+  // String depth = '0';
+  // String bottomSelect = '0';
+  // String mode = 'C';
 
   void _onTap (int index) async {
     setState(() {
       _currentIndex = index;
       print(_currentIndex);
 
+
+      print(widget.userid.userMode);
+
     });
   }
 
 
   Widget build (BuildContext context) {
-    getPresentMode(_currentIndex, widget.userid.nickname, widget.userid.userId, context);
-
 
 
     final List<Widget> _children = [
       home(id: widget.userid.userId, title: widget.userid.nickname, humidity: widget.humid, illuminace: widget.illum, waterDepth: widget.depth, ph: widget.ph,img: widget.img,),
       myHistory(title: widget.userid.nickname, userid: widget.userid.userId,), // 오늘 날짜 전달?
-      myMode(title: widget.userid.nickname, presentMode: widget.userid.userMode, presentHumid: widget.userid.userHumid, presentLight: widget.userid.userLight), // 현재 모드 전달
+      myMode(title: widget.userid.nickname, id: widget.userid.userId, presentMode: widget.userid.userMode, presentHumid: widget.userid.userHumid, presentLight: widget.userid.userLight), // 현재 모드 전달
       myControl(title: widget.userid.nickname)]; // 현재 장치 모드 전달
     return Scaffold(
       body: _children[_currentIndex],
