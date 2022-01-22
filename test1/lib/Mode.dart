@@ -23,7 +23,6 @@ class myMode extends StatefulWidget { // 현재 모드 및 모드관련 정보
 
   myMode({Key? key, required this.title, required this.id, required this.presentMode, required this.presentHumid, required this.presentLight}) : super(key: key);
 
-
   bool _manualCheck = false;
   bool _autoCheck = false;
 
@@ -38,19 +37,12 @@ class _myMode extends State<myMode> {
   TextEditingController mode_humidity = TextEditingController();
 
   Object? mode = 'auto';
-  int go = 1;
-  void firstMode() {
-    getPresentMode(2, widget.title, widget.id, context).then((returnResult) =>{
-      widget.presentMode = returnResult.mode}
-    );
+  int go = 0;
 
-    print(widget.presentMode);
-    if (widget.presentMode == 'A') {
-      widget._autoCheck = true;
-    }
-    else {
-      widget._manualCheck = true;
-    }
+  void firstMode() { // 가져온 상태에 따라 checkBox 상태 표시
+    if (widget.presentMode == 'A') widget._autoCheck = true;
+
+    else widget._manualCheck = true;
   }
 
 
@@ -166,10 +158,13 @@ class _myMode extends State<myMode> {
                       style: TextStyle(fontSize: 20, color: Colors.grey),),
                     onPressed: () {
                       // saveMode(widget.title, mode, illuminace, humidity, context)
-                      print(widget.presentMode);
-                      go = 0;
-                      finishMode(go, widget.id, widget.presentMode, mode_illum.text, mode_humidity.text, context);
+                      print("before : ${widget.presentMode}");
+                      if(widget._autoCheck == true) widget.presentMode = 'A';
+                      else widget.presentMode = 'M';
+                      print("after : ${widget.presentMode}");
                       go = 1;
+                      finishMode(widget.id, widget.presentMode, mode_illum.text, mode_humidity.text, context);
+                      go = 0;
 
                     },
                   )

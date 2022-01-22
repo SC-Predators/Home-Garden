@@ -57,6 +57,9 @@ class _mainPage extends State<mainPage>{
     setState(() {
       _currentIndex = index;
       print(_currentIndex);
+      getPresentMode(2, widget.userid.nickname, widget.userid.userId, context).then((returnResult) =>{
+        widget.userid.userMode = returnResult.mode}
+      );
 
 
       print(widget.userid.userMode);
