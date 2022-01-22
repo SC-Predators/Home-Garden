@@ -18,8 +18,8 @@ class myMode extends StatefulWidget { // 현재 모드 및 모드관련 정보
   final String title; // 닉네임 이름
   String id;
   String presentMode;
-  int presentHumid;
-  int presentLight;
+  String presentHumid;
+  String presentLight;
 
   myMode({Key? key, required this.title, required this.id, required this.presentMode, required this.presentHumid, required this.presentLight}) : super(key: key);
 

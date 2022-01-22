@@ -22,10 +22,10 @@ class home extends StatefulWidget {
   final String id;
   final String title;
   final String img;
-  final int humidity;
-  final int illuminace;
-  final int waterDepth;
-  final int ph;
+  final String humidity;
+  final String illuminace;
+  final String waterDepth;
+  final String ph;
 
   @override
   State<home> createState() => _home();

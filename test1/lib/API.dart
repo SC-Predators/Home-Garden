@@ -87,7 +87,7 @@ import 'historyHomepage.dart';
        else { // 로그인 정보 일치
          print(user['result']['desired_light'] is int);
          userID send = userID(
-             id, user['result']['moode'], user['result']['desired_humidity'], user['result']['desired_light'], user['result']['plantNickName']);
+             id, user['result']['moode'], user['result']['desired_humidity'].toString(), user['result']['desired_light'].toString(), user['result']['plantNickName']);
          showData(send, id, context); // 아이디에 따라 닉네임, 모드 정보 가져오기
        }
      }
@@ -442,11 +442,11 @@ void showData (userID sent, String id, BuildContext context) async{
     else {
       Navigator.push(context, MaterialPageRoute(builder: (_) =>
           mainPage(userid: sent,
-            humid: user['result']['humidity'],
-            illum: user['result']['illuminate'],
-            depth: user['result']['waterDepth'],
-            ph: user['result']['ph'],
-            img: user['result']['imgURL'],)));
+            humid: user['result']['humidity'].toString(),
+            illum: user['result']['illuminate'].toString(),
+            depth: user['result']['waterDepth'].toString(),
+            ph: user['result']['ph'].toString(),
+            img: user['result']['imgURL'].toString(),)));
     }
   }
 
@@ -591,7 +591,7 @@ Future<modeData> getPresentMode (int index, String title, String id, BuildContex
 
            return modeData(
                user['result']['mode'], user['result']['humidity'].toString(),
-               user['result']['illuminace'].toString());
+               user['result']['illuminance'].toString());
          }
        };
        // Navigator.push(context, MaterialPageRoute(builder: (_) =>
