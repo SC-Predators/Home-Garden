@@ -456,84 +456,83 @@ void showData (userID sent, String id, BuildContext context) async{
 }
 
 
-//모드 변경...모드 상태 가져오기
-void finishMode (int go, String id, String mode, String illum, String humid, BuildContext context) async {
+//모드 변경 -> 변경된 모드 저장하기
+
+void finishMode (String id, String mode, String illum, String humid, BuildContext context) async {
   userID send;
-  print("finishMode : ${mode}");
-  if (go == 0) {
-    var data = {
-      "clientID": id,
-      "mode": mode,
-      "illuminance": illum,
-      "humidity": humid
-    };
-    print(data);
+  print("finishMode : ${mode}"); // 저장하는 모드 상태 확인하기
+  var data = {
+    "clientID": id,
+    "mode": mode,
+    "illuminance": illum,
+    "humidity": humid
+  };
+  print(data);
 
-    String url = "http://218.152.140.80:23628/app/users/plant/mode";
-    var body = json.encode(data);
+  String url = "http://218.152.140.80:23628/app/users/plant/mode";
+  var body = json.encode(data);
 
-    http.Response res = await http.patch(url,
-        headers: {"Content-Type": "application/json"},
-        body: body
-    );
+  http.Response res = await http.patch(url,
+      headers: {"Content-Type": "application/json"},
+      body: body
+  );
 
-    if (res.statusCode == 200) {
-      String responsebody = utf8.decode(res.bodyBytes);
-      Map <String, dynamic> user = jsonDecode(responsebody);
-      print(user);
-      if (user['isSuccess'] == false) {
-        showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: Text('알림'),
-                content: SingleChildScrollView(
-                    child: ListBody(
-                      children: [
-                        Text('연결에 실패하였습니다\n다시 시도해주세요'),
-                      ],
-                    )
-                ),
-                actions: <Widget>[
-                  FlatButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: Text('ok')
+  if (res.statusCode == 200) {
+    String responsebody = utf8.decode(res.bodyBytes);
+    Map <String, dynamic> user = jsonDecode(responsebody);
+    print(user);
+    if (user['result'] == "변경실패") {
+      showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('알림'),
+              content: SingleChildScrollView(
+                  child: ListBody(
+                    children: [
+                      Text('연결에 실패하였습니다\n다시 시도해주세요'),
+                    ],
                   )
-                ],
-              );
-            }
-        );
-      }
+              ),
+              actions: <Widget>[
+                FlatButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('ok')
+                )
+              ],
+            );
+          }
+      );
+    }
 
-      else {
-        showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: Text('알림'),
-                content: SingleChildScrollView(
-                    child: ListBody(
-                      children: [
-                        Text('정보를 변경하였습니다.'),
-                      ],
-                    )
-                ),
-                actions: <Widget>[
-                  FlatButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: Text('ok')
+    else {
+      showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('알림'),
+              content: SingleChildScrollView(
+                  child: ListBody(
+                    children: [
+                      Text('정보를 변경하였습니다.'),
+                    ],
                   )
-                ],
-              );
-            }
-        );
-      }
+              ),
+              actions: <Widget>[
+                FlatButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('ok')
+                )
+              ],
+            );
+          }
+      );
     }
   }
 }
@@ -545,7 +544,8 @@ Future<modeData> getPresentMode (int index, String title, String id, BuildContex
      userID send;
      var data = {
        "clientID": id,
-     };print(id);
+     };
+     print(id);
 
      String url = "http://218.152.140.80:23628/app/users/plant/mode";
      var body = json.encode(data);
@@ -559,62 +559,41 @@ Future<modeData> getPresentMode (int index, String title, String id, BuildContex
        String responsebody = utf8.decode(res.bodyBytes);
        Map <String, dynamic> user = jsonDecode(responsebody);
        print(user);
-       if (user['isSuccess'] == false) {
-         showDialog(
-             context: context,
-             barrierDismissible: false,
-             builder: (BuildContext context) {
-               return AlertDialog(
-                 title: Text('알림'),
-                 content: SingleChildScrollView(
-                     child: ListBody(
-                       children: [
-                         Text('연결에 실패하였습니다\n다시 시도해주세요'),
-                       ],
+         if (user['isSuccess'] == false) {
+           showDialog(
+               context: context,
+               barrierDismissible: false,
+               builder: (BuildContext context) {
+                 return AlertDialog(
+                   title: Text('알림'),
+                   content: SingleChildScrollView(
+                       child: ListBody(
+                         children: [
+                           Text('연결에 실패하였습니다\n다시 시도해주세요'),
+                         ],
+                       )
+                   ),
+                   actions: <Widget>[
+                     FlatButton(
+                         onPressed: () {
+                           Navigator.of(context).pop();
+                         },
+                         child: Text('ok')
                      )
-                 ),
-                 actions: <Widget>[
-                   FlatButton(
-                       onPressed: () {
-                         Navigator.of(context).pop();
-                       },
-                       child: Text('ok')
-                   )
-                 ],
-               );
-             }
-         );
-       }
+                   ],
+                 );
+               }
+           );
+         }
 
-       else {
-         showDialog(
-             context: context,
-             barrierDismissible: false,
-             builder: (BuildContext context) {
-               return AlertDialog(
-                 title: Text('알림'),
-                 content: SingleChildScrollView(
-                     child: ListBody(
-                       children: [
-                         Text('정보를 변경하였습니다.'),
-                       ],
-                     )
-                 ),
-                 actions: <Widget>[
-                   FlatButton(
-                       onPressed: () {
-                         Navigator.of(context).pop();
-                       },
-                       child: Text('ok')
-                   )
-                 ],
-               );
-             }
-         );
-         print("success");
+         else { // 연결성공 시
+           print("success");
 
-         return modeData(user['result']['mode'], user['result']['humidity'].toString(), user['result']['illuminace'].toString());
-       }
+           return modeData(
+               user['result']['mode'], user['result']['humidity'].toString(),
+               user['result']['illuminace'].toString());
+         }
+       };
        // Navigator.push(context, MaterialPageRoute(builder: (_) =>
        //     myMode(title: title,
        //         presentMode: user['result']['mode'],
@@ -623,13 +602,12 @@ Future<modeData> getPresentMode (int index, String title, String id, BuildContex
        // )
        // );
 
-     }
    }
-   print("fail");
+   print("getPresentMode fail");
    return modeData('C', '0', '0');
 }
 
-// 사용자 제어 상태 전송하기
+// 사용자 장치 제어 상태 전송하기
  void saveControl (String title, String nickName, bool led, bool water, BuildContext context) async {
    userID send;
    String _light;
@@ -669,61 +647,59 @@ Future<modeData> getPresentMode (int index, String title, String id, BuildContex
      String responsebody = utf8.decode(res.bodyBytes);
      Map <String, dynamic> user = jsonDecode(responsebody);
      print(user);
-     if (user['isSuccess'] == false) {
-       showDialog(
-           context: context,
-           barrierDismissible: false,
-           builder: (BuildContext context) {
-             return AlertDialog(
-               title: Text('알림'),
-               content: SingleChildScrollView(
-                   child: ListBody(
-                     children: [
-                       Text('연결에 실패하였습니다\n다시 시도해주세요'),
-                     ],
+       if (user['isSuccess'] == false) {
+         showDialog(
+             context: context,
+             barrierDismissible: false,
+             builder: (BuildContext context) {
+               return AlertDialog(
+                 title: Text('알림'),
+                 content: SingleChildScrollView(
+                     child: ListBody(
+                       children: [
+                         Text('연결에 실패하였습니다\n다시 시도해주세요'),
+                       ],
+                     )
+                 ),
+                 actions: <Widget>[
+                   FlatButton(
+                       onPressed: () {
+                         Navigator.of(context).pop();
+                       },
+                       child: Text('ok')
                    )
-               ),
-               actions: <Widget>[
-                 FlatButton(
-                     onPressed: () {
-                       Navigator.of(context).pop();
-                     },
-                     child: Text('ok')
-                 )
-               ],
-             );
-           }
-       );
-     }
+                 ],
+               );
+             }
+         );
+       }
 
-     else {
-       showDialog(
-           context: context,
-           barrierDismissible: false,
-           builder: (BuildContext context) {
-             return AlertDialog(
-               title: Text('알림'),
-               content: SingleChildScrollView(
-                   child: ListBody(
-                     children: [
-                       Text('상태가 변경되었습니다.'),
-                     ],
+       else {
+         showDialog(
+             context: context,
+             barrierDismissible: false,
+             builder: (BuildContext context) {
+               return AlertDialog(
+                 title: Text('알림'),
+                 content: SingleChildScrollView(
+                     child: ListBody(
+                       children: [
+                         Text('상태가 변경되었습니다.'),
+                       ],
+                     )
+                 ),
+                 actions: <Widget>[
+                   FlatButton(
+                       onPressed: () {
+                         Navigator.of(context).pop();
+                       },
+                       child: Text('ok')
                    )
-               ),
-               actions: <Widget>[
-                 FlatButton(
-                     onPressed: () {
-                       Navigator.of(context).pop();
-                     },
-                     child: Text('ok')
-                 )
-               ],
-             );
-           }
-       );
+                 ],
+               );
+             }
+         );
      }
    }
-
-
    print("saveControl");
  }
