@@ -37,7 +37,7 @@ class _myMode extends State<myMode> {
   TextEditingController mode_humidity = TextEditingController();
 
   Object? mode = 'auto';
-  int go = 0;
+
 
   void firstMode() { // 가져온 상태에 따라 checkBox 상태 표시
     if (widget.presentMode == 'A') widget._autoCheck = true;
@@ -116,7 +116,7 @@ class _myMode extends State<myMode> {
                   )
               ),
 
-
+                if (widget._manualCheck == true)
                 Container(
                     child: Column(
                       children: <Widget>[
@@ -162,9 +162,7 @@ class _myMode extends State<myMode> {
                       if(widget._autoCheck == true) widget.presentMode = 'A';
                       else widget.presentMode = 'M';
                       print("after : ${widget.presentMode}");
-                      go = 1;
                       finishMode(widget.id, widget.presentMode, mode_illum.text, mode_humidity.text, context);
-                      go = 0;
 
                     },
                   )
