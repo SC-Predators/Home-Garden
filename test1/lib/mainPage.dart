@@ -13,8 +13,8 @@ import 'package:http/http.dart' as http;
 class userID {
   String userId= '';
   String userMode = '';
-  int userHumid = 0;
-  int userLight = 0;
+  String userHumid = '';
+  String userLight = '';
   String nickname = '';
 
   userID(this.userId, this.userMode, this.userHumid, this.userLight, this.nickname);
@@ -26,11 +26,11 @@ class mainPage extends StatefulWidget {
 
   final userID userid;
   mainPage({required this.userid, required this.humid, required this.illum, required this.depth, required this.ph, required this.img});
-  final int humid;
-  final int illum;
-  final int depth;
-  final int ph;
-  final String img;
+  String humid;
+  String illum;
+  String depth;
+  String ph;
+  String img;
 
   @override
   State<mainPage> createState() => _mainPage();
@@ -59,12 +59,12 @@ class _mainPage extends State<mainPage>{
       print(_currentIndex);
       getPresentMode(2, widget.userid.nickname, widget.userid.userId, context).then((returnResult) =>{
         widget.userid.userMode = returnResult.mode,
-      widget.userid.userLight = returnResult.light as int,
-      widget.userid.userHumid = returnResult.humid as int}
+      widget.userid.userLight = returnResult.light,
+      widget.userid.userHumid = returnResult.humid}
       );
 
 
-      print(widget.userid.userMode);
+      print(widget.userid.userLight);
 
     });
   }
