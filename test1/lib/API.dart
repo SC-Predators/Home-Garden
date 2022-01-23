@@ -298,6 +298,7 @@ void finishSignup(String barcode, String id, String password, String nickname, b
           }
       );
     }
+
     // Navigator.push(context, MaterialPageRoute(builder: (_) => MyHomePage(title: 'SMART HOME GARDEN',)));
   }
   else {
@@ -330,6 +331,7 @@ void finishSignup(String barcode, String id, String password, String nickname, b
 
 
 // 홈화면 및 기록확인 화면 정보 가져오기 - 습도, 조도, 산성도, 높이, 이미지
+// 시간있으면 수정하기 --- 제대로 작도하는거 xxxx
 void getData (String id, BuildContext context, String _title) async {
   var data = {
     "clientID": id
@@ -346,14 +348,14 @@ void getData (String id, BuildContext context, String _title) async {
     Map<String, dynamic> user = jsonDecode(reponsebody);
   }
   else {
+
     print("데이터가 없습니다.");
   }
 }
 
 //기록 가져오기 -- 날짜 시간 보내면 이미지, 온도, 조도, 산성도 가져오기
+void getHistory (String title, String id, String month, String date, String hour, String minute , BuildContext context) async {
 
-void getHistory (String title, String id, String month, String date, String hour, String minute , BuildContext context) async{
-  print(month);
   var data = {
     "clientID": id,
     "month": month,
@@ -367,34 +369,89 @@ void getHistory (String title, String id, String month, String date, String hour
   var body = json.encode(data);
 
   http.Response res = await http.post(url,
-      headers:  {"Content-Type": "application/json"},
+      headers: {"Content-Type": "application/json"},
       body: body
   );
   print(res.statusCode);
-  if(res.statusCode == 200) {
-    String responsebody = utf8.decode (res.bodyBytes);
+  if (res.statusCode == 200) {
+    String responsebody = utf8.decode(res.bodyBytes);
     Map <String, dynamic> user = jsonDecode(responsebody);
-    print(user);
 
-
-    Navigator.push(context, MaterialPageRoute(builder: (_) => historyHome(title : title,
-        ph:user['result']['ph'].toString(),
-      humidity: user['result']['humidity'].toString(),
-      illuminance: user['result']['illuminate'].toString(),
-      depth: user['result']['waterDepth'].toString(),
-      img: user['result']['imgURL'].toString(),)));
+    if (user['result']['humidity'] == null ||
+        user['result']['illuminate'] == null ||
+        user['result']['waterDepth'] == null || user['result']['ph'] == null ||
+        user['result']['imgURL'] == null) {
+      showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('알림'),
+              content: SingleChildScrollView(
+                  child: ListBody(
+                    children: [
+                      Text('기록된 장치 정보가 없습니다.'),
+                    ],
+                  )
+              ),
+              actions: <Widget>[
+                FlatButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('ok')
+                )
+              ],
+            );
+          }
+      );
+    }
+    else {
+      Navigator.push(context,
+          MaterialPageRoute(builder: (_) => // 해당하는 날짜의 기록정보가 있는 화면으로 전환
+          historyHome(title: title,
+            ph: user['result']['ph'].toString(),
+            humidity: user['result']['humidity'].toString(),
+            illuminance: user['result']['illuminate'].toString(),
+            depth: user['result']['waterDepth'].toString(),
+            img: user['result']['imgURL'].toString(),)));
+    }
   }
 
-  else {
+  else { // 연결 실패
+      showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('알림'),
+              content: SingleChildScrollView(
+                  child: ListBody(
+                    children: [
+                      Text('연결에 실패하였습니다\n다시 시도해주세요'),
+                    ],
+                  )
+              ),
+              actions: <Widget>[
+                FlatButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('ok')
+                )
+              ],
+            );
+          }
+      );
+
     print("getHistory fail");
   }
 }
-
 //현재 상태 확인 용
-void showData (userID sent, String id, BuildContext context) async{
+void showData (userID sent, String id, BuildContext context) async {
   userID send;
   var data = {
-    "clientID" : id,
+    "clientID": id,
   };
 
   String url = "http://218.152.140.80:23628/app/users/plant/present";
@@ -402,17 +459,17 @@ void showData (userID sent, String id, BuildContext context) async{
 
 
   http.Response res = await http.post(url,
-      headers:  {"Content-Type": "application/json"},
+      headers: {"Content-Type": "application/json"},
       body: body
   );
 
-  if(res.statusCode == 200) {
-    String responsebody = utf8.decode (res.bodyBytes);
+  if (res.statusCode == 200) {
+    String responsebody = utf8.decode(res.bodyBytes);
     Map <String, dynamic> user = jsonDecode(responsebody);
     print(user);
+    // 현재 장치 정보가 없는 경우
     if (user['result']['humidity'] == null || user['result']['illuminate'] == null ||
-        user['result']['waterDepth'] == null || user['result']['ph'] == null ||
-        user['result']['imgURL'] == null){
+        user['result']['waterDepth'] == null || user['result']['ph'] == null || user['result']['imgURL'] == null) {
       showDialog(
           context: context,
           barrierDismissible: false,
@@ -437,8 +494,8 @@ void showData (userID sent, String id, BuildContext context) async{
             );
           }
       );
-
     }
+
     else {
       Navigator.push(context, MaterialPageRoute(builder: (_) =>
           mainPage(userid: sent,
@@ -460,14 +517,13 @@ void showData (userID sent, String id, BuildContext context) async{
 
 void finishMode (String id, String mode, String illum, String humid, BuildContext context) async {
   userID send;
-  print("finishMode : ${mode}"); // 저장하는 모드 상태 확인하기
+
   var data = {
     "clientID": id,
     "mode": mode,
     "illuminance": illum,
     "humidity": humid
   };
-  print(data);
 
   String url = "http://218.152.140.80:23628/app/users/plant/mode";
   var body = json.encode(data);
@@ -538,94 +594,74 @@ void finishMode (String id, String mode, String illum, String humid, BuildContex
 }
 
 //mode 페이지 작동시 새로 정보 가져오기
-
 Future<modeData> getPresentMode (int index, String title, String id, BuildContext context) async {
-   if (index == 2) {
-     userID send;
-     var data = {
-       "clientID": id,
-     };
-     print(id);
+  if (index == 2) { // bottom navigation 바에서 모드화면 입력 시에만 연결
+    userID send;
+    var data = {
+      "clientID": id,
+    };
 
-     String url = "http://218.152.140.80:23628/app/users/plant/mode";
-     var body = json.encode(data);
+    String url = "http://218.152.140.80:23628/app/users/plant/mode";
+    var body = json.encode(data);
 
-     http.Response res = await http.post(url,
-         headers: {"Content-Type": "application/json"},
-         body: body
-     );
+    http.Response res = await http.post(url,
+        headers: {"Content-Type": "application/json"},
+        body: body
+    );
 
-     if (res.statusCode == 200) {
-       String responsebody = utf8.decode(res.bodyBytes);
-       Map <String, dynamic> user = jsonDecode(responsebody);
-       print(user);
-         if (user['isSuccess'] == false) {
-           showDialog(
-               context: context,
-               barrierDismissible: false,
-               builder: (BuildContext context) {
-                 return AlertDialog(
-                   title: Text('알림'),
-                   content: SingleChildScrollView(
-                       child: ListBody(
-                         children: [
-                           Text('연결에 실패하였습니다\n다시 시도해주세요'),
-                         ],
-                       )
-                   ),
-                   actions: <Widget>[
-                     FlatButton(
-                         onPressed: () {
-                           Navigator.of(context).pop();
-                         },
-                         child: Text('ok')
-                     )
-                   ],
-                 );
-               }
-           );
-         }
+    if (res.statusCode == 200) {
+      String responsebody = utf8.decode(res.bodyBytes);
+      Map <String, dynamic> user = jsonDecode(responsebody);
+      print(user);
+      if (user['isSuccess'] == false) {
+        showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text('알림'),
+                content: SingleChildScrollView(
+                    child: ListBody(
+                      children: [
+                        Text('연결에 실패하였습니다\n다시 시도해주세요'),
+                      ],
+                    )
+                ),
+                actions: <Widget>[
+                  FlatButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text('ok')
+                  )
+                ],
+              );
+            }
+        );
+      }
 
-         else { // 연결성공 시
-           print("success");
+      else { // 연결성공 시
+        print("getPresentMode success");
 
-           return modeData(
-               user['result']['mode'], user['result']['humidity'].toString(),
-               user['result']['illuminance'].toString());
-         }
-       };
-       // Navigator.push(context, MaterialPageRoute(builder: (_) =>
-       //     myMode(title: title,
-       //         presentMode: user['result']['mode'],
-       //         presentHumid: user['result']['humidity'],
-       //         presentLight: user['result']['illuminace'])
-       // )
-       // );
-
-   }
-   print("getPresentMode fail");
-   return modeData('C', '0', '0');
+        return modeData(
+            user['result']['mode'], user['result']['humidity'].toString(), user['result']['illuminance'].toString());
+      }
+    };
+  }
+  print("getPresentMode fail");
+  return modeData('C', '0', '0');
 }
 
 // 사용자 장치 제어 상태 전송하기
  void saveControl (String title, String nickName, bool led, bool water, BuildContext context) async {
    userID send;
-   String _light;
-   String _water;
-   if (led == true) {
-     _light = 'on';
-   }
-   else {
-     _light = 'off';
-   }
+   String _light, _water;
 
-   if (water == true) {
-     _water = 'on';
-   }
-   else {
-     _water = 'off';
-   }
+   if (led == true) _light = 'on';
+   else _light = 'off';
 
+   if (water == true) _water = 'on';
+   else _water = 'off';
 
    var data = {
      "clientID": nickName,
@@ -647,7 +683,7 @@ Future<modeData> getPresentMode (int index, String title, String id, BuildContex
      String responsebody = utf8.decode(res.bodyBytes);
      Map <String, dynamic> user = jsonDecode(responsebody);
      print(user);
-       if (user['isSuccess'] == false) {
+       if (user['isSuccess'] == false) { // aws에 변경된 정보 못 보내면 뜨는 경고
          showDialog(
              context: context,
              barrierDismissible: false,
@@ -674,7 +710,7 @@ Future<modeData> getPresentMode (int index, String title, String id, BuildContex
          );
        }
 
-       else {
+       else { // 상태 변경 성공 시
          showDialog(
              context: context,
              barrierDismissible: false,
@@ -701,5 +737,4 @@ Future<modeData> getPresentMode (int index, String title, String id, BuildContex
          );
      }
    }
-   print("saveControl");
  }
