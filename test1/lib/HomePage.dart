@@ -53,7 +53,7 @@ class _home extends State<home> {
           new IconButton(
               onPressed:() {
                 setState(() {
-                  getData(widget.id, context, widget.title);
+                  getData(widget.id, context, widget.title); // 이거 약간 버그.. 지만 녹화할 때 문제는 없을 듯 ?
                 }
                 );
               }
