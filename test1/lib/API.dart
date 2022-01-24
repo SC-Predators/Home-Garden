@@ -331,7 +331,7 @@ void finishSignup(String barcode, String id, String password, String nickname, b
 
 
 // 홈화면 및 기록확인 화면 정보 가져오기 - 습도, 조도, 산성도, 높이, 이미지
-// 시간있으면 수정하기 --- 제대로 작도하는거 xxxx
+// 시간있으면 수정하기 --- 제대로 작동하는거 xxxx
 void getData (String id, BuildContext context, String _title) async {
   var data = {
     "clientID": id
@@ -346,6 +346,12 @@ void getData (String id, BuildContext context, String _title) async {
   if (res.statusCode == 200) {
     String reponsebody = utf8.decode(res.bodyBytes);
     Map<String, dynamic> user = jsonDecode(reponsebody);
+
+    print(user);
+
+    Navigator.push(context, MaterialPageRoute(builder: (_)=>home(id: id, title: _title,
+        img: user['result']['imgURL'].toString(), humidity: user['result']['humidity'].toString(),
+        illuminace: user['result']['illuminate'].toString(), waterDepth: user['result']['waterDepth'].toString(), ph: user['result']['ph'].toString())));
   }
   else {
 
