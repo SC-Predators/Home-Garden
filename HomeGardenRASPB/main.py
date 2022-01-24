@@ -34,8 +34,10 @@ MESSAGE = "Hello World"
 TOPIC = "$aws/things/Homegarden/shadow/update/delta"
 RANGE = 20
 received_count = 0
+global is_manual_water_on
+is_manual_water_on = 0
 
-ser = serial.Serial('/dev/ttyACM0', 9600)
+ser = serial.Serial('/dev/ttyACM1', 9600)
 
 # pip install boto3
 # Module not found err: pip install opencv-python
@@ -53,6 +55,7 @@ def connect_RDS(host, port, username, password, database):
 
 # Callback when the subscribed topic receives a message
 def on_message_received(topic, payload, **kwargs):
+    global is_manual_water_on
     print("Received message from topic '{}': {}".format(topic, payload))
     jsonObject = json.loads(payload)
     state = jsonObject.get("state")
@@ -60,9 +63,11 @@ def on_message_received(topic, payload, **kwargs):
     manual_water = desired.get("manual_water")
     if(manual_water == "on"):
         print("manual_water: " + manual_water)
+        is_manual_water_on = 1
         ser.write(b'w')
-    elif(manual_water == "off"):
+    elif(manual_water == "off" and is_manual_water_on == 1):
         print("manual_water: " + manual_water)
+        is_manual_water_on = 0
         ser.write(b'n')
         
 #IoT Core에 연결! 
@@ -193,6 +198,7 @@ def get_desired_state():
 
 def mainloop():
     conn, cursor = connect_RDS(ck.host, ck.port, ck.username, ck.password, ck.database)
+    global is_manual_water_on
 
     while 1:
         # 시리얼 포트 내용 가져와 JSON파싱
@@ -201,13 +207,16 @@ def mainloop():
         print("data: " + data)
         if data[0] == "=":
             continue
-        parsing = json.loads(data);
+        try:
+            parsing = json.loads(data);
+        except:
+            continue
         now = dt.datetime.now().strftime("%Y-%m-%d %H-%M-%S");
         present_depth = parsing["depth"]; # 물 깊이
         present_ph = parsing["ph"]; # 토양 산성도
         present_humidity = parsing['soil_humid']; # 토양 습도
         present_light = parsing["light"]; # 조도
-        # 아두이노에서 센서 값 가져오기
+        # 10초에 한번씩 desired State를 받아와 현재 상태와 비교한다.
         if dt.datetime.now().second % 10 == 0:
             #desired_State 가져오기
             desired_humidity, desired_light = get_desired_state()
@@ -219,20 +228,14 @@ def mainloop():
                 # do someThing
                 print("Desired Humid: " + str(desired_humidity) + "but " + str(present_humidity) + " given.")
                 ser.write(b'w')
-            else:
+            elif is_manual_water_on==0 and present_humidity >= desired_humidity:
                 ser.write(b's')
-            time.sleep(1.5)
-        # 산성도, 물높이 등도 다 가져오기
-        if dt.datetime.now().minute % 10 == 0 & dt.datetime.now().second % 60 == 0:
+        # 사진 찍어 올리기
+        if dt.datetime.now().minute % 5 == 0:
             file_name = capture(0, now)
             update_with_imgurl(file_name, now)
-            desired_humidity, desired_light = get_desired_state()
-            if present_light < desired_light:
-                # do someThing
-                print("#do something - light")
-            if present_humidity < desired_humidity:
-                # do someThing
-                print("Desired Humid: " + desired_humidiry + "but " + present_humidity + " given.")
+
+
 
 
 if __name__ == '__main__':
