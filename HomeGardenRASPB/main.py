@@ -37,7 +37,7 @@ received_count = 0
 global is_manual_water_on
 is_manual_water_on = 0
 
-ser = serial.Serial('/dev/ttyACM1', 9600)
+ser = serial.Serial('/dev/ttyACM0', 9600)
 
 # pip install boto3
 # Module not found err: pip install opencv-python
@@ -168,8 +168,11 @@ def update_with_imgurl(file_name, now):
 
     cursor.execute(updateQuery)
     conn.commit()
-    os.remove(file_name)
-
+    try:
+        os.remove(file_name)
+    except:
+        return
+    
 def update_without_img(present_humidity, present_light, present_depth, present_ph):
     conn, cursor = connect_RDS(ck.host, ck.port, ck.username, ck.password, ck.database)
     updateQuery = """INSERT INTO Present_state (homegardenID, humidity, light, water_level, phStatus)
@@ -222,17 +225,17 @@ def mainloop():
             #desired_State 가져오기
             desired_humidity, desired_light = get_desired_state()
             update_without_img(present_humidity, present_light, present_depth, present_ph)
+            
             if present_light < desired_light:
-                # do someThing
                 print("#do something - light")
+                
             if present_humidity < desired_humidity:
-                # do someThing
-                print("Desired Humid: " + str(desired_humidity) + "but " + str(present_humidity) + " given.")
+                print("Desired Humid: " + str(desired_humidity) + " but " + str(present_humidity) + " given.")
                 ser.write(b'w')
             elif is_manual_water_on==0 and present_humidity >= desired_humidity:
                 ser.write(b's')
         # 사진 찍어 올리기
-        if dt.datetime.now().second == 30:
+        if dt.datetime.now().second%30 == 0:
             file_name = capture(0, now)
             update_with_imgurl(file_name, now)
 
