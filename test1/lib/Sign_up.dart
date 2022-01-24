@@ -43,7 +43,7 @@ class _SignUP extends State<SignUP> {
               child: Row(
                 children: <Widget>[
                   Container(
-                    width: 300,
+                    width: 250,
                     margin: EdgeInsets.only(
                         left: 20, top: 20, right: 10, bottom: 10),
                     child: TextField(
@@ -62,7 +62,7 @@ class _SignUP extends State<SignUP> {
                         duplicateId(IDcontroll.text, context);
                       },
                       child: Text("중복확인",
-                        style: TextStyle(fontSize: 15, color: Colors.grey),),
+                        style: TextStyle(fontSize: 15, color: Colors.grey,)),
                     ),
                   ),
                 ],
@@ -179,7 +179,7 @@ class _SignUP extends State<SignUP> {
 
             Container(
               color: Color(0xffFFF59D),
-              padding: EdgeInsets.symmetric(vertical: 3, horizontal: 150),
+              padding: EdgeInsets.symmetric(vertical: 3, horizontal: 120),
               margin: EdgeInsets.symmetric(vertical: 10),
               child: TextButton(
                 onPressed: (){

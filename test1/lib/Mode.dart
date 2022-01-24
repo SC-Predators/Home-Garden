@@ -151,7 +151,7 @@ class _myMode extends State<myMode> {
 
               Container( // SAVE 버튼
                   margin: EdgeInsets.only(top: 40),
-                  padding: EdgeInsets.symmetric(vertical: 5, horizontal: 150),
+                  padding: EdgeInsets.symmetric(vertical: 5, horizontal: 130),
                   color: Color(0xffFFF59D),
                   child: TextButton(
                     child: Text("SAVE",
