@@ -117,17 +117,16 @@ class _myControl extends State<myControl> {
 
             Container( // SAVE 버튼
                 margin: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 125),
+                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 130),
                 color: Color(0xffFFF59D),
                 child: TextButton(
                   child: Text("ACTUAL",
-                    style: TextStyle(fontSize: 25, color: Colors.grey),),
+                    style: TextStyle(fontSize: 17, color: Colors.grey),),
                   onPressed: () {
                     saveControl(widget.title, widget.title, _ledcheck_on, _watercheck_on, context);
                   },
                 )
             ),
-
           ],
         ),
       ),

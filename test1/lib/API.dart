@@ -657,19 +657,21 @@ Future<modeData> getPresentMode (int index, String title, String id, BuildContex
    userID send;
    String _light, _water;
 
-   if (led == true) _light = 'on';
-   else _light = 'off';
+   if (led == true)
+     _light = 'on';
+   else
+     _light = 'off';
 
-   if (water == true) _water = 'on';
-   else _water = 'off';
+   if (water == true)
+     _water = 'on';
+   else
+     _water = 'off';
 
    var data = {
      "clientID": nickName,
      "light": _light,
      "water": _water
    };
-
-   print(data);
 
    String url = "https://sxo1vvu9ai.execute-api.ap-northeast-2.amazonaws.com//app/users/plant/active";
    var body = json.encode(data);
@@ -679,62 +681,31 @@ Future<modeData> getPresentMode (int index, String title, String id, BuildContex
        body: body
    );
 
-   if (res.statusCode == 200) {
-     String responsebody = utf8.decode(res.bodyBytes);
-     Map <String, dynamic> user = jsonDecode(responsebody);
-     print(user);
-       if (user['isSuccess'] == false) { // aws에 변경된 정보 못 보내면 뜨는 경고
-         showDialog(
-             context: context,
-             barrierDismissible: false,
-             builder: (BuildContext context) {
-               return AlertDialog(
-                 title: Text('알림'),
-                 content: SingleChildScrollView(
-                     child: ListBody(
-                       children: [
-                         Text('연결에 실패하였습니다\n다시 시도해주세요'),
-                       ],
-                     )
-                 ),
-                 actions: <Widget>[
-                   FlatButton(
-                       onPressed: () {
-                         Navigator.of(context).pop();
-                       },
-                       child: Text('ok')
-                   )
+   if (res.statusCode == 200) {}
+
+   // 상태 변경 성공 시
+   showDialog(
+       context: context,
+       barrierDismissible: false,
+       builder: (BuildContext context) {
+         return AlertDialog(
+           title: Text('알림'),
+           content: SingleChildScrollView(
+               child: ListBody(
+                 children: [
+                   Text('상태가 변경되었습니다.'),
                  ],
-               );
-             }
+               )
+           ),
+           actions: <Widget>[
+             FlatButton(
+                 onPressed: () {
+                   Navigator.of(context).pop();
+                 },
+                 child: Text('ok')
+             )
+           ],
          );
        }
-
-       else { // 상태 변경 성공 시
-         showDialog(
-             context: context,
-             barrierDismissible: false,
-             builder: (BuildContext context) {
-               return AlertDialog(
-                 title: Text('알림'),
-                 content: SingleChildScrollView(
-                     child: ListBody(
-                       children: [
-                         Text('상태가 변경되었습니다.'),
-                       ],
-                     )
-                 ),
-                 actions: <Widget>[
-                   FlatButton(
-                       onPressed: () {
-                         Navigator.of(context).pop();
-                       },
-                       child: Text('ok')
-                   )
-                 ],
-               );
-             }
-         );
-     }
-   }
+   );
  }
