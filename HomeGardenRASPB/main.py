@@ -188,7 +188,7 @@ def update_without_img(present_humidity, present_light, present_depth, present_p
 def get_desired_state():
     conn, cursor = connect_RDS(ck.host, ck.port, ck.username, ck.password, ck.database)
     get_desired_state_query = f"SELECT desired_humidity, desired_light FROM Desired_state where homegardenID = \"{homegarden_barcode}\" "
-    print(get_desired_state_query)
+    #print(get_desired_state_query)
     cursor.execute(get_desired_state_query)
     result = cursor.fetchall()
     conn.close()
@@ -217,6 +217,7 @@ def mainloop():
         present_humidity = parsing['soil_humid']; # 토양 습도
         present_light = parsing["light"]; # 조도
         # 10초에 한번씩 desired State를 받아와 현재 상태와 비교한다.
+        # 또한 이미지없이 현재 상태만 업로드한다.
         if dt.datetime.now().second % 10 == 0:
             #desired_State 가져오기
             desired_humidity, desired_light = get_desired_state()
@@ -231,7 +232,7 @@ def mainloop():
             elif is_manual_water_on==0 and present_humidity >= desired_humidity:
                 ser.write(b's')
         # 사진 찍어 올리기
-        if dt.datetime.now().minute % 5 == 0:
+        if dt.datetime.now().second == 30:
             file_name = capture(0, now)
             update_with_imgurl(file_name, now)
 
